@@ -1,0 +1,62 @@
+.timeline-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.timeline-step {
+    text-align: center;
+    flex: none;
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    margin: 0 10px;
+}
+
+.timeline-icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #ddd;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.timeline-step.active .timeline-icon {
+    background-color: #0d6efd;
+}
+
+.timeline-label {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.timeline-step.active .timeline-label {
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.timeline-line {
+    width: 100px; /* Adjust the width based on spacing */
+    height: 5px;
+    background-color: #ddd;
+    position: relative;
+    top: 18px; /* Align with the middle of the icons */
+    z-index: 0;
+    transition: background-color 0.2s ease;
+}
+
+.timeline-line.active {
+    background-color: #0d6efd;
+}
+
+
+

@@ -1,0 +1,297 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Seller Management{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='table.css') }}">
+
+<nav class="navbar navbar-expand">
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/admin_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex" action="{{ url_for('admin_seller_management.admin_seller_management') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search sellers..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+                <a href="{{ url_for('admin_seller_management.admin_seller_management', status=current_status) }}" class="btn btn-dark ms-2">Reset</a>
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="{{ url_for('static', filename='img/admin_navs/admin_logo.png') }}" alt="Profile" style="cursor: pointer;">             
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="" style="font-size: 1rem">
+                    {{ session['user_name'] }}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Content Section -->
+<main class="content">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div>
+            <h3>
+                {% if current_status == 'Archived' %}
+                    Archived Sellers
+                {% elif current_status == 'Banned' %}
+                    Banned Sellers
+                {% elif current_status == 'Pending' %}
+                    Pending Sellers
+                {% else %}
+                    Active Sellers
+                {% endif %}
+            </h3>
+            <p class="mt-1">
+                <small class="text-muted">
+                    {% if current_status == 'Archived' %}
+                        Here's the archived sellers.
+                    {% elif current_status == 'Banned' %}
+                        Here's the banned sellers.
+                    {% elif current_status == 'Pending' %}
+                        Here's the pending sellers.
+                    {% else %}
+                        Here's the active sellers.
+                    {% endif %}
+                </small>
+            </p>
+        </div>
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <!-- Sort Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li><a class="dropdown-item {% if selected_sort == 'recent' %}active{% endif %}" href="{{ url_for('admin_seller_management.admin_seller_management', status=current_status, sort='recent') }}">Recent</a></li>
+                    <li><a class="dropdown-item {% if selected_sort == 'oldest' %}active{% endif %}" href="{{ url_for('admin_seller_management.admin_seller_management', status=current_status, sort='oldest') }}">Oldest</a></li>
+                </ul>
+            </div>
+        
+            <!-- Status Buttons -->
+            {% if current_status == 'Archived' %}
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_seller_management.admin_seller_management', status='Registered') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                    Show Active
+                </button>
+            {% elif current_status == 'Banned' %}
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_seller_management.admin_seller_management', status='Registered') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                    Show Active
+                </button>
+            {% elif current_status == 'Pending' %}
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_seller_management.admin_seller_management', status='Registered') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                    Show Active
+                </button>
+            {% else %}
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_seller_management.admin_seller_management', status='Archived') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Archived Icon" class="me-1" style="width: 1rem;">
+                    Show Archived
+                </button>
+                <button class="btn btn-danger d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_seller_management.admin_seller_management', status='Banned') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Banned Icon" class="me-1" style="width: 1rem;">
+                    Show Banned
+                </button>
+                <button class="btn btn-dark d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_seller_management.admin_seller_management', status='Pending') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Pending Icon" class="me-1" style="width: 1rem;">
+                    Show Pendings
+                </button>
+            {% endif %}
+        </div>
+        
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="alert-container">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Seller Table -->
+    <div class="table-responsive table-container" style="overflow-x: auto;">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="bg-primary text-white">No.</th>
+                    <th class="bg-primary text-white">Full Name</th>
+                    <th class="bg-primary text-white">Age</th>
+                    <th class="bg-primary text-white">Sex</th>
+                    <th class="bg-primary text-white">Phone</th>
+                    <th class="bg-primary text-white">Email</th>
+                    <th class="bg-primary text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for seller in sellers %}
+                    <tr>
+                        <td>{{ loop.index + (page - 1) * limit }}</td>
+                        <td>{{ seller.Full_Name }}</td>
+                        <td>{{ seller.Age }}</td>
+                        <td>{{ seller.Sex }}</td>
+                        <td>{{ seller.Phone_Number }}</td>
+                        <td>{{ seller.Email_Address }}</td>
+                        <td class="actions-column">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                {% if current_status == 'Pending' %}
+                                    <!-- Approve Button -->
+                                    <form action="{{ url_for('admin_seller_management.approve_seller', seller_id=seller.Seller_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_seller_management.approve_seller', seller_id=seller.Seller_ID) }}"
+                                                data-notification-title="{{ seller.Full_Name }}"
+                                                data-action-type="approve">
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <!-- Decline Button -->
+                                    <form action="{{ url_for('admin_seller_management.decline_seller', seller_id=seller.Seller_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_seller_management.decline_seller', seller_id=seller.Seller_ID) }}"
+                                                data-notification-title="{{ seller.Full_Name }}"
+                                                data-action-type="decline">
+                                            Decline
+                                        </button>
+                                    </form>
+                                
+                                {% elif current_status == 'Archived' %}
+                                    <!-- Unarchive Button -->
+                                    <form action="{{ url_for('admin_seller_management.unarchive_seller', seller_id=seller.Seller_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_seller_management.unarchive_seller', seller_id=seller.Seller_ID) }}"
+                                                data-notification-title="{{ seller.Full_Name }}"
+                                                data-action-type="unarchive">
+                                            Unarchive
+                                        </button>
+                                    </form>
+                                
+                                {% elif current_status == 'Banned' %}
+                                    <!-- Unban Button -->
+                                    <form action="{{ url_for('admin_seller_management.unban_seller', seller_id=seller.Seller_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_seller_management.unban_seller', seller_id=seller.Seller_ID) }}"
+                                                data-notification-title="{{ seller.Full_Name }}"
+                                                data-action-type="unban">
+                                            Unban
+                                        </button>
+                                    </form>
+                                
+                                {% else %}
+                                    <!-- Archive Button -->
+                                    <form action="{{ url_for('admin_seller_management.archive_seller', seller_id=seller.Seller_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_seller_management.archive_seller', seller_id=seller.Seller_ID) }}"
+                                                data-notification-title="{{ seller.Full_Name }}"
+                                                data-action-type="archive">
+                                            Archive
+                                        </button>
+                                    </form>
+
+                                    <!-- Ban Button -->
+                                    <form action="{{ url_for('admin_seller_management.ban_seller', seller_id=seller.Seller_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_seller_management.ban_seller', seller_id=seller.Seller_ID) }}"
+                                                data-notification-title="{{ seller.Full_Name }}"
+                                                data-action-type="ban">
+                                            Ban
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+        <!-- Previous Button -->
+        {% if page > 1 %}
+            <a href="{{ url_for('admin_seller_management.admin_seller_management', page=page-1, search=search, status=current_status, sort=selected_sort) }}" class="btn btn-primary">Prev</a>
+        {% endif %}
+    
+        <!-- Page Info -->
+        <span>Page {{ page }} of {{ total_pages }}</span>
+    
+        <!-- Next Button -->
+        {% if page < total_pages %}
+            <a href="{{ url_for('admin_seller_management.admin_seller_management', page=page+1, search=search, status=current_status, sort=selected_sort) }}" class="btn btn-primary">Next</a>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-indent: 2rem;">
+                Are you sure you want to <span class="text-dark fw-bold" id="actionType"></span> the seller <span class="text-primary fw-bold" id="sellerName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="confirmActionForm" method="post">
+                    <button type="submit" class="btn btn-primary" id="confirmActionButton">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Button that triggered the modal
+        const actionUrl = button.getAttribute('data-action'); // Get the action URL (approve/unapprove, etc.)
+        const sellerName = button.getAttribute('data-notification-title'); // Get seller's name
+        const actionType = button.getAttribute('data-action-type'); // Get action type (approve, ban, etc.)
+
+        // Set modal content dynamically
+        document.getElementById('actionType').textContent = actionType;
+        document.getElementById('sellerName').textContent = sellerName;
+        document.getElementById('confirmActionForm').action = actionUrl; // Set the form action URL
+    });
+</script>
+
+
+
+{% endblock %}

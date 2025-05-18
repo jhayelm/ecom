@@ -1,0 +1,19 @@
+{% extends "base_login.html" %}
+
+{% block title %}Account Banned{% endblock %}
+
+{% block content %}
+<div class="full-screen-container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="form-container login-container text-center">
+        <div class="mb-5">
+            <h2 class="fs-3" style="font-weight: 600;">Account Banned</h2>
+        </div>
+
+        <div>
+            <img src="{{ url_for('static', filename='img/cover/banned.png') }}" alt="Account Banned" style="width: 200px;">
+            <p class="mt-4">Your account has been banned. Please contact support for more information.</p>
+            <a href="{{ url_for('login.login') }}" class="btn btn-primary mt-4">Back to Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

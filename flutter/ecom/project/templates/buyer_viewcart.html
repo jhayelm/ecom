@@ -1,0 +1,72 @@
+{% extends 'base_buyer.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Shopping Cart</h1>
+
+        <!-- Check if buyer is logged in and not a guest -->
+        {% if not buyer_id or name_profile == 'guest' %}
+            <p>Please log in to view your cart.</p>
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+        {% else %}
+            <!-- Display buyer_id for debugging (remove after testing) -->
+            <p>Buyer ID: {{ buyer_id }}</p>
+
+            {% if cart_items %}
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Color</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                            <tr>
+                                <td>{{ item.Product_Name }}</td>
+                                <td>{{ item.Quantity }}</td>
+                                <td>{{ item.Color_Name }}</td>
+                                <td>
+                                    {% if item.Product_Price is not none %}
+                                        ${{ "{:,.2f}".format(item.Product_Price) }}
+                                    {% else %}
+                                        $0.00
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.Total_Price is not none %}
+                                        ${{ "{:,.2f}".format(item.Total_Price) }}
+                                    {% else %}
+                                        $0.00
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <!-- Link to remove an item from the cart -->
+                                    <a href="{{ url_for('buyer.remove_from_cart', cart_item_id=item.cart_item_id) }}">Remove</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="cart-summary">
+                    <h3>Cart Summary</h3>
+                    <!-- Display total items and total price -->
+                    <p>Total Items: {{ cart_items|length }}</p>
+                    <p>Total Price: 
+                        {% set total_price = cart_items|sum(attribute='Total_Price') %}
+                        ${{ "{:,.2f}".format(total_price) }}
+                    </p>
+                    <a href="{{ url_for('buyer.checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+                </div>
+
+            {% else %}
+                <p>Your cart is empty.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

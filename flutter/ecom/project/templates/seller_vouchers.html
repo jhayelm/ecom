@@ -1,0 +1,472 @@
+{% extends "base_seller.html" %}
+
+{% block title %}Vouchers{% endblock %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex align-items-center" action="{{ url_for('seller_vouchers.seller_vouchers') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search vouchers..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+
+                <!-- Reset Button -->
+                <a href="{{ url_for('seller_vouchers.seller_vouchers', view_archived=view_archived) }}" class="btn btn-dark ms-2">Reset</a>
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="data:image/jpeg;base64,{{ shop_profile.Shop_Profile|b64encode }}" 
+                        alt="Shop Image" 
+                        class="img-fluid border rounded-circle border-secondary border-2"
+                        style="width: 40px; height: 40px">                
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="d-flex flex-column gap-0">
+                    <div class="" >
+                        {{ shop_profile.Shop_Name }}
+                    </div>
+                    <div class="text-secondary d-none" style="font-size: 0.7rem">
+                        {{ session['user_name'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        
+        {% if view_archived %}       
+            <div>
+                <h3>Archived Vouchers</h3>
+                <p class="mt-1"><small class="text-muted">Here's your archived vouchers.</small></p>
+            </div>
+        {% else %}
+            <div>
+                <h3>Vouchers</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current vouchers.</small></p>
+            </div>
+        {% endif %}
+    
+        <div class="btn-container d-flex flex-wrap gap-2">
+
+    
+            <!-- Sort by Date -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle " type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li>
+                        <a class="dropdown-item {% if selected_sort == 'recent' %}active{% endif %}" 
+                           href="{{ url_for('seller_vouchers.seller_vouchers', sort='recent', filter=selected_filter, search=search, view_archived=view_archived) }}">
+                           Recent
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if selected_sort == 'oldest' %}active{% endif %}" 
+                           href="{{ url_for('seller_vouchers.seller_vouchers', sort='oldest', filter=selected_filter, search=search, view_archived=view_archived) }}">
+                           Oldest
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Filter by Voucher Type -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter by Type
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <li><a class="dropdown-item {% if selected_filter == 'All' %}active{% endif %}" href="{{ url_for('seller_vouchers.seller_vouchers', filter='All', sort=selected_sort, search=search, view_archived=view_archived) }}">All</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Free Shipping' %}active{% endif %}" href="{{ url_for('seller_vouchers.seller_vouchers', filter='Free Shipping', sort=selected_sort, search=search, view_archived=view_archived) }}">Free Shipping</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Discount' %}active{% endif %}" href="{{ url_for('seller_vouchers.seller_vouchers', filter='Discount', sort=selected_sort, search=search, view_archived=view_archived) }}">Discount</a></li>
+                </ul>
+            </div>
+            
+            <div class="btn-container d-flex flex-wrap gap-2">
+                {% if view_archived %}
+                    <a href="{{ url_for('seller_vouchers.seller_vouchers') }}" class="btn btn-primary">
+                        <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                        Show Active
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('seller_vouchers.seller_vouchers', view_archived='true') }}" class="btn btn-primary">
+                        <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Archive Icon" class="me-1" style="width: 1rem;">
+                        Show Archive
+                    </a>
+                {% endif %}
+            </div>
+            <button class="btn btn-dark d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addVoucherModal">
+                <img src="{{ url_for('static', filename='img/icons/add.png') }}" alt="Add Voucher Icon" class="me-1" style="width: 1rem;">
+                Add Voucher
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Voucher Table -->
+    <div class="table-responsive table-container" style="overflow-x: auto;">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="bg-primary text-white">No.</th>
+                    <th class="bg-primary text-white">Voucher Type</th>
+                    <th class="bg-primary text-white">Voucher Name</th>
+                    <th class="bg-primary text-white">Voucher Minimum</th>
+                    <th class="bg-primary text-white d-none">Voucher Description</th>
+                    <th class="bg-primary text-white">Start Date</th>
+                    <th class="bg-primary text-white">End Date</th>
+                    <th class="bg-primary text-white d-none">Date Added</th>
+                    <th class="bg-primary text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voucher in vouchers %}
+                    <tr>
+                        <td>{{ loop.index + (page - 1) * limit }}</td>
+                        <td>{{ voucher.Voucher_Type }}</td>
+                        <td>{{ voucher.Voucher_Name }}</td>
+                        <td>PHP {{ "{:,.2f}".format(voucher.Voucher_Min) }}</td>
+                        <td class="d-none">{{ voucher.Voucher_Description }}</td>
+                        <td>{{ voucher.Voucher_Start_Date.strftime('%B %d, %Y') }}</td>
+                        <td>{{ voucher.Voucher_End_Date.strftime('%B %d, %Y') }}</td>
+                        <td class="d-none">{{ voucher.Date_Added.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if voucher.Status == 'Archived' %}
+                                <!-- Unarchive button -->
+                                <form action="{{ url_for('seller_vouchers.unarchive_voucher', voucher_id=voucher.Voucher_ID) }}" method="post" style="display: inline;" onsubmit="return confirmAction('Are you sure you want to unarchive this voucher?', this)">
+                                    <button type="submit" class="btn btn-outline-primary border-primary btn-sm btn-archive">Unarchive</button>
+                                </form>
+                            {% else %}
+                                <!-- Archive button -->
+                                <form action="{{ url_for('seller_vouchers.archive_voucher', voucher_id=voucher.Voucher_ID) }}" method="post" style="display: inline;" onsubmit="return confirmAction('Are you sure you want to archive this voucher?', this)">
+                                    <button type="submit" class="btn btn-outline-primary border-primary btn-sm btn-archive">Archive</button>
+                                </form>
+                                
+                            {% endif %}
+                        
+                            <!-- Update button -->
+                            <button class="btn btn-primary btn-sm btn-edit" data-bs-toggle="modal" data-bs-target="#updateVoucherModal" 
+                                data-voucher-id="{{ voucher.Voucher_ID }}"
+                                data-voucher-type="{{ voucher.Voucher_Type }}"
+                                data-voucher-name="{{ voucher.Voucher_Name }}"
+                                data-voucher-min="{{ voucher.Voucher_Min }}"
+                                data-voucher-description="{{ voucher.Voucher_Description }}"
+                                data-voucher-start-date="{{ voucher.Voucher_Start_Date }}"
+                                data-voucher-end-date="{{ voucher.Voucher_End_Date }}">
+                                Update
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+        <!-- Previous Button -->
+        {% if page > 1 %}
+            <a href="{{ url_for('seller_vouchers.seller_vouchers', page=page-1, search=search, view_archived=view_archived) }}" class="btn btn-primary">Prev</a>
+        {% endif %}
+    
+        <!-- Page Info -->
+        <span>Page {{ page }} of {{ total_pages }}</span>
+    
+        <!-- Next Button -->
+        {% if page < total_pages %}
+            <a href="{{ url_for('seller_vouchers.seller_vouchers', page=page+1, search=search, view_archived=view_archived) }}" class="btn btn-primary">Next</a>
+        {% endif %}
+    </div>
+
+</main>
+
+
+<!-- Voucher Modal -->
+<div class="modal fade" id="addVoucherModal" tabindex="-1" aria-labelledby="addVoucherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg add-product-container">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h5 class="modal-title" id="addVoucherModalLabel">Add New Voucher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for Adding Voucher -->
+                <form action="{{ url_for('seller_vouchers.add_voucher') }}" method="POST">
+                    
+                    <!-- Voucher Type -->
+                    <div class="mb-3">
+                        <label for="voucherType" class="form-label">Voucher Type*</label>
+                        <select class="form-control" id="voucherType" name="voucherType" required>
+                            <option value="">Select Voucher Type</option>
+                            <option value="Discount">Discount</option>
+                            <option value="Free Shipping">Free Shipping</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Voucher Name -->
+                    <div class="mb-3">
+                        <label for="voucherName" class="form-label">Voucher Name*</label>
+                        <input type="text" class="form-control" id="voucherName" name="voucherName" placeholder="Enter voucher name" required>
+                    </div>
+
+                    <!-- Voucher Minimum -->
+                    <div class="mb-3">
+                        <label for="voucherMinimum" class="form-label">Voucher Minimum*</label>
+                        <input type="number" step="0.01" class="form-control" id="voucherMinimum" name="voucherMinimum" placeholder="Enter minimum amount" required>
+                    </div>
+
+                    <!-- Voucher Description -->
+                    <div class="mb-3">
+                        <label for="voucherDescription" class="form-label">Voucher Description*</label>
+                        <textarea class="form-control" id="voucherDescription" name="voucherDescription" placeholder="Enter voucher description" rows="4" required></textarea>
+                    </div>
+                    <div class="d-flex gap-2 w-100">
+
+                        <!-- Voucher Start Date -->
+                        <div class="mb-3 w-50">
+                            <label for="voucherStartDate" class="form-label">Voucher Start Date*</label>
+                            <input type="date" class="form-control" id="voucherStartDate" name="voucherStartDate" required>
+                        </div>
+
+                        <!-- Voucher End Date -->
+                        <div class="mb-3 w-50">
+                            <label for="voucherEndDate" class="form-label">Voucher End Date*</label>
+                            <input type="date" class="form-control" id="voucherEndDate" name="voucherEndDate" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Add Voucher</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Voucher Modal -->
+<div class="modal fade" id="updateVoucherModal" tabindex="-1" aria-labelledby="updateVoucherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg add-product-container">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateVoucherModalLabel">Update Voucher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('seller_vouchers.update_voucher') }}" method="POST" id="updateVoucherForm">
+                    <!-- Hidden Field for Voucher ID -->
+                    <input type="hidden" name="voucher_id" id="updateVoucherId">
+                    
+                    <!-- Voucher Type -->
+                    <div class="mb-3">
+                        <label for="updateVoucherType" class="form-label">Voucher Type</label>
+                        <select class="form-control" id="updateVoucherType" name="voucherType" required>
+                            <option value="">Select Voucher Type</option>
+                            <option value="Discount">Discount</option>
+                            <option value="Free Shipping">Free Shipping</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Voucher Name -->
+                    <div class="mb-3">
+                        <label for="updateVoucherName" class="form-label">Voucher Name</label>
+                        <input type="text" class="form-control" id="updateVoucherName" name="voucherName" required>
+                    </div>
+
+                    <!-- Voucher Minimum -->
+                    <div class="mb-3">
+                        <label for="updateVoucherMinimum" class="form-label">Voucher Minimum</label>
+                        <input type="number" step="0.01" class="form-control" id="updateVoucherMinimum" name="voucherMinimum" required>
+                    </div>
+
+                    <!-- Voucher Description -->
+                    <div class="mb-3">
+                        <label for="updateVoucherDescription" class="form-label">Voucher Description</label>
+                        <textarea class="form-control" id="updateVoucherDescription" name="voucherDescription" rows="4" required></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 w-100">
+                        <!-- Voucher Start Date -->
+                        <div class="mb-3 w-50">
+                            <label for="updateVoucherStartDate" class="form-label">Voucher Start Date</label>
+                            <input type="date" class="form-control" id="updateVoucherStartDate" name="voucherStartDate" required>
+                        </div>
+
+                        <!-- Voucher End Date -->
+                        <div class="mb-3 w-50">
+                            <label for="updateVoucherEndDate" class="form-label">Voucher End Date</label>
+                            <input type="date" class="form-control" id="updateVoucherEndDate" name="voucherEndDate" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button (Triggers the Confirmation Modal) -->
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary w-100 mt-3" data-bs-toggle="modal" data-bs-target="#updateConfirmationModal">Update Voucher</button>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-indent: 2rem;">
+                <p id="confirmationMessage">Are you sure you want to proceed with this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmActionButton">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Confirmation Modal -->
+<div class="modal fade" id="updateConfirmationModal" tabindex="-1" aria-labelledby="updateConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateConfirmationModalLabel">Confirm Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-indent: 2rem;">
+                <p>Are you sure you want to update this voucher? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmUpdateButton">Yes, Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='seller_voucher.css') }}">
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const updateButtons = document.querySelectorAll('.btn-edit');
+        const updateModal = document.getElementById('updateVoucherModal');
+        
+        updateButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const voucherId = button.getAttribute('data-voucher-id');
+                const voucherType = button.getAttribute('data-voucher-type');
+                const voucherName = button.getAttribute('data-voucher-name');
+                const voucherMin = button.getAttribute('data-voucher-min');
+                const voucherDescription = button.getAttribute('data-voucher-description');
+                const voucherStartDate = button.getAttribute('data-voucher-start-date'); // New field
+                const voucherEndDate = button.getAttribute('data-voucher-end-date');     // New field
+    
+                // Populate the modal with voucher data
+                document.getElementById('updateVoucherId').value = voucherId;
+                document.getElementById('updateVoucherType').value = voucherType;
+                document.getElementById('updateVoucherName').value = voucherName;
+                document.getElementById('updateVoucherMinimum').value = voucherMin;
+                document.getElementById('updateVoucherDescription').value = voucherDescription;
+    
+                // Populate the new start and end date fields
+                document.getElementById('updateVoucherStartDate').value = voucherStartDate;
+                document.getElementById('updateVoucherEndDate').value = voucherEndDate;
+            });
+        });
+    });
+    
+    // Function to show the confirmation modal with a custom message and set the action
+    function confirmAction(message, formElement) {
+        // Set the confirmation message in the modal
+        document.getElementById('confirmationMessage').innerText = message;
+        
+        // Store the form element in the global scope so we can submit it after confirmation
+        const formToSubmit = formElement;
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        modal.show();
+
+        // Add event listener for confirmation button
+        document.getElementById('confirmActionButton').onclick = function() {
+            formToSubmit.submit(); // Submit the form
+            modal.hide(); // Hide the modal
+        };
+
+        // Prevent the form from submitting immediately
+        return false;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const confirmUpdateButton = document.getElementById('confirmUpdateButton');
+        const updateVoucherForm = document.getElementById('updateVoucherForm');
+        
+        confirmUpdateButton.addEventListener('click', () => {
+            // Submit the form to update the voucher after confirmation
+            updateVoucherForm.submit();
+        });
+    });
+    
+</script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='seller_inventory.css') }}">
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

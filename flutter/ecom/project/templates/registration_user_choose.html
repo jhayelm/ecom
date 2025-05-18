@@ -1,0 +1,24 @@
+{% extends "base_login.html" %}
+
+{% block title %}Fenamaz - Choose Registration Type{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container choose-container">
+        <div class="d-flex justify-content-between mb-4">
+            <h2 class="fs-3" style="font-weight: 600;">Register</h2>
+            <a href="{{ url_for('login.login') }}" class="exit-icon text-dark">
+                <i class="bi bi-x fs-3"></i>
+            </a>
+        </div>
+
+        <p>Please choose how you would like to register:</p>
+
+        <!-- Registration options -->
+        <div class="registration-options mt-4">
+            <a href="{{ url_for('registration.personal_info') }}" class="btn btn-outline-primary w-100 mb-3">Register as Buyer</a>
+            <a href="{{ url_for('seller_registration.seller_personal_info') }}" class="btn btn-outline-primary w-100">Register as Seller</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

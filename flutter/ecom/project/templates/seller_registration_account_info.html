@@ -1,0 +1,82 @@
+{% extends "base_login.html" %}
+
+{% block title %}Register - Account Information{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container registration-container">
+        <a href="{{ url_for('seller_registration.seller_business_info') }}" class="exit-icon text-dark">
+            <i class="bi bi-arrow-left fs-4 px-2"></i>
+        </a>
+        <h2 class="mb-4 fs-3" style="font-weight: 600;">Register!</h2>
+        <h3 class="mb-3 fs-6" style="font-weight: 500;"><strong>Step 5:</strong> Account Information</h3>
+
+        <!-- Message Box -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} 
+        
+        <form action="{{ url_for('seller_registration.seller_account_info') }}" method="POST" onsubmit="return validatePasswords()">
+            <div id="alert"></div> 
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone No.</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required oninput="numbers_only_limit11(this)">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mt-3">Next</button>
+        </form>
+    </div>
+
+    <script>
+        function validatePasswords() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const alertDiv = document.getElementById('alert');
+            const minPasswordLength = 8;  // Minimum password length required
+
+            alertDiv.innerHTML = '';  // Clear any previous alerts
+
+            // Check if password is at least 8 characters
+            if (password.length < minPasswordLength) {
+                alertDiv.innerHTML = 
+                    `<div class="alert alert-dismissible fade show" role="alert" style="background-color: #f8d7da; color: #721c24;">
+                        Password must be at least ${minPasswordLength} characters long.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`;
+                return false;  // Prevent form submission
+            }
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alertDiv.innerHTML = 
+                    `<div class="alert alert-dismissible fade show" role="alert" style="background-color: #f8d7da; color: #721c24;">
+                        Passwords do not match. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`;
+                return false;  // Prevent form submission
+            }
+            return true;  // Allow form submission
+        }
+    </script>
+</div>
+{% endblock %}

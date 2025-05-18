@@ -1,0 +1,96 @@
+body, html {
+    height: 100vh;
+    font-family: Outfit;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.login-container, .choose-container {
+    position: relative;
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0; 
+}
+
+.registration-container {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0; 
+}
+
+.full-screen-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.form-container strong {
+    color: #6d78db;
+}
+
+.form-container h2 {
+    font-weight: 600;
+}
+
+.form-container p {
+    font-family: Arial, sans-serif; 
+    opacity: 0.6; 
+    font-style: italic;
+    font-size: 0.8;
+    margin-bottom: 0; /* Remove margin bottom for paragraphs */
+}
+
+.form-container label {
+    font-size: .85rem;
+}
+
+.form-container input, .form-container select {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.form-control, .btn {
+    padding: 0.5rem 1rem;
+}
+
+.exit-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.exit-icon:hover {
+    color: #ff0000; 
+}
+
+.mt-3 {
+    margin-top: 1rem; 
+}
+
+.mb-4 {
+    margin-bottom: 1rem; 
+}
+
+.password-field {
+    position: relative;
+}
+  
+.password-field__toggle {
+    position: absolute;
+    top: 73%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+}

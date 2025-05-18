@@ -1,0 +1,220 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+h3, h4, p, small {
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid {
+    padding: 2rem;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.navbar .search-bar {
+    width: 300px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.navbar .btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.navbar .btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* KPI Cards */
+.kpis {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.kpi-card {
+    background-color: #4e73df;
+    color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    flex: 1;
+    position: relative;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-card h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.kpi-card p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.kpi-card small {
+    font-size: 0.8rem;
+    color: lightgreen;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+/* Sales Summary Section */
+.sales-summary {
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sales-summary h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.sales-summary select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+#salesChart {
+    max-width: 100%;
+    height: 300px;
+}
+
+/* Additional Info Section */
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.info-box {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.info-box p {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* Most Selling Products Section */
+.products-section {
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.products-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.products-section .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.product {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    flex: 1;
+}
+
+.product h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.product p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.product small {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .kpis {
+        flex-wrap: wrap;
+    }
+
+    .kpi-card {
+        margin-bottom: 1rem;
+    }
+
+    .info-section {
+        flex-wrap: wrap;
+    }
+
+    .info-box {
+        margin-bottom: 1rem;
+    }
+
+    .products-section .row {
+        flex-wrap: wrap;
+    }
+
+    .product {
+        margin-bottom: 1rem;
+    }
+}

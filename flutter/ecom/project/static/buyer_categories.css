@@ -1,0 +1,83 @@
+.cat-container {
+    width: 96%;
+    margin: 1rem 0 0 3rem;
+    gap: 1rem;
+}
+
+.price-filter-panel,
+.product-categories-panel {
+    margin-top: 1rem;
+    border: solid 2px rgb(0, 0, 0, 0.1);
+    width: 100%;
+    min-width: 400px;
+    background-color: white;
+    padding: 1.5rem;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* Ensure product-item container has a fixed size */
+.product-item {
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: auto; /* Fixed width */
+    height: auto; /* Fixed height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Fixed size for product image */
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 200px; /* Fixed height for image container */
+    border-radius: 10px;
+}
+
+/* Hover effect on product-item */
+.product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover overlay */
+.hover-overlay {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-details {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.product-details h6 {
+    color: #0d6efd;
+}
+
+.product-details a {
+    color: #343a40; 
+}
+
+.truncate-text {
+    overflow: hidden;           
+}

@@ -1,0 +1,275 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='table.css') }}">
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/admin_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex align-items-center" action="{{ url_for('admin_notifications.admin_notifications') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search notifications..."
+                    aria-label="Search"
+                    value="{{ search_query }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+            
+                <!-- Reset Button -->
+                <a href="{{ url_for('admin_notifications.admin_notifications', type=selected_type, sort=selected_sort, view_archived=view_archived) }}" class="btn btn-dark ms-2">Reset</a>
+            
+                <!-- Hidden fields to preserve filter and sort state -->
+                <input type="hidden" name="type" value="{{ selected_type }}">
+                <input type="hidden" name="sort" value="{{ selected_sort }}">
+                <input type="hidden" name="view_archived" value="{{ view_archived }}">
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="{{ url_for('static', filename='img/admin_navs/admin_logo.png') }}" alt="Profile" style="cursor: pointer;">             
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="" style="font-size: 1rem">
+                    {{ session['user_name'] }}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+        <div>
+            {% if view_archived %}
+                <div>
+                    <h3>Archived Notifications</h3>
+                    <p class="mt-1"><small class="text-muted">Here's your archived notifications.</small></p>
+                </div>
+            {% else %}
+                <div>
+                    <h3>Notifications</h3>
+                    <p class="mt-1"><small class="text-muted">Here's your recent notifications.</small></p>
+                </div>
+            {% endif %}
+        </div>
+    
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <!-- Sort Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li><a class="dropdown-item {% if selected_sort == 'recent' %}active{% endif %}" 
+                           href="{{ url_for('admin_notifications.admin_notifications', sort='recent', view_archived=view_archived) }}">Recent</a></li>
+                    <li><a class="dropdown-item {% if selected_sort == 'oldest' %}active{% endif %}" 
+                           href="{{ url_for('admin_notifications.admin_notifications', sort='oldest', view_archived=view_archived) }}">Oldest</a></li>
+                </ul>
+            </div>
+        
+            <!-- Filter Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="typeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter by Type
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="typeDropdown">
+                    <li>
+                        <a class="dropdown-item {% if selected_type == 'All' %}active{% endif %}" 
+                           href="{{ url_for('admin_notifications.admin_notifications', type='All', sort=selected_sort, view_archived=view_archived) }}">
+                            All
+                        </a>
+                    </li>
+                    {% for type in notification_types %}
+                    <li>
+                        <a class="dropdown-item {% if selected_type == type.notification_type %}active{% endif %}" 
+                           href="{{ url_for('admin_notifications.admin_notifications', type=type.notification_type, sort=selected_sort, view_archived=view_archived) }}">
+                            {{ type.notification_type }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Show Archive Button -->
+            {% if view_archived %}
+                <a href="{{ url_for('admin_notifications.admin_notifications') }}" class="btn btn-primary">
+                    <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                    Show Active
+                </a>
+            {% else %}
+                <a href="{{ url_for('admin_notifications.admin_notifications', view_archived='true') }}" class="btn btn-primary">
+                    <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Archive Icon" class="me-1" style="width: 1rem;">
+                    Show Archived
+                </a>
+            {% endif %}
+
+            <!-- Mark All as Read Button -->
+            <form action="{{ url_for('admin_notifications.mark_all_as_read') }}" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-dark">
+                    <img src="{{ url_for('static', filename='img/icons/mark_as_read.png') }}" alt="Mark All as Read Icon" class="my-1" style="width: 1rem;">
+                    Mark All as Read
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="notifications-list">
+        {% for notification in notifications %}
+        <div class="notification-item border rounded p-3 mb-3 d-flex align-items-center {% if notification.is_read %}bg-read{% else %}bg-white{% endif %}">
+            <!-- Icons -->
+            <div class="me-4 d-flex align-items-start flex-column">
+                {% if notification.notification_type == 'Pending Seller Registration' %}
+                <img src="{{ url_for('static', filename='img/icons/user.png') }}" alt="Icon" class="me-1" style="width: 1.5rem;">
+                {% elif notification.notification_type == 'New User Registration' %}
+                <img src="{{ url_for('static', filename='img/icons/user.png') }}" alt="Icon" class="me-1" style="width: 1.5rem;">
+                {% elif notification.notification_type == 'Order Update' %}
+                <img src="{{ url_for('static', filename='img/icons/product.png') }}" alt="Show Archive Icon" class="me-1" style="width: 1.5rem;">
+                {% else %}
+                <img src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Icon" class="me-1" style="width: 1.5rem;">
+                {% endif %}
+            </div>
+            <div class="flex-grow-1">
+                <h5 class="mb-1">{{ notification.title }}</h5>
+                <pre class="mb-1 w-75" style="white-space: pre-wrap; font-family: inherit;">{{ notification.message }}</pre>
+                <small class="text-secondary">{{ notification.created_at.strftime('%B %d, %Y %I:%M %p') }}</small>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="d-flex flex-row ms-3 gap-1">
+                {% if view_archived %}
+                    <!-- Unarchive Button -->
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#confirmModal"
+                            data-action="{{ url_for('admin_notifications.unarchive_notification', notification_id=notification.notification_id) }}"
+                            data-notification-title="{{ notification.title }}"
+                            data-action-type="unarchive">
+                        Unarchive
+                    </button>
+                {% else %}
+                    <!-- Archive Button -->
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#confirmModal"
+                            data-action="{{ url_for('admin_notifications.archive_notification', notification_id=notification.notification_id) }}"
+                            data-notification-title="{{ notification.title }}"
+                            data-action-type="archive">
+                        Archive
+                    </button>
+                {% endif %}
+                
+                <!-- Delete Button -->
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                        data-action="{{ url_for('admin_notifications.delete_notification', notification_id=notification.notification_id) }}"
+                        data-notification-title="{{ notification.title }}"
+                        data-action-type="delete">
+                    Delete
+                </button>
+                <!-- Mark as Read Button -->
+                <form action="{{ url_for('admin_notifications.mark_as_read', notification_id=notification.notification_id) }}" method="POST">
+                    <button type="submit" class="btn btn-dark btn-sm" >Mark as Read</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not notifications %}
+        <div class="alert alert-info">You have no notifications at the moment.</div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_notifications.admin_notifications', page=page-1) }}">Previous</a>
+            </li>
+            {% endif %}
+            {% for p in range(1, total_pages + 1) %}
+            <li class="page-item {% if page == p %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('admin_notifications.admin_notifications', page=p) }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+            {% if page < total_pages %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_notifications.admin_notifications', page=page+1) }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+</main>
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-indent: 2rem;">
+                Are you sure you want to <span class="text-dark fw-bold" id="actionType"></span> the notification <span class="text-primary fw-bold" id="notificationTitle"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="confirmActionForm" method="post">
+                    <button type="submit" class="btn btn-primary" id="confirmActionButton">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle the modal data for notifications
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Button that triggered the modal
+        const actionUrl = button.getAttribute('data-action'); // Get the action URL (archive/unarchive/delete)
+        const notificationTitle = button.getAttribute('data-notification-title'); // Get notification title
+        const actionType = button.getAttribute('data-action-type'); // Get action type (archive, unarchive, delete)
+
+        // Set modal content dynamically
+        document.getElementById('actionType').textContent = actionType;
+        document.getElementById('notificationTitle').textContent = notificationTitle;
+        document.getElementById('confirmActionForm').action = actionUrl; // Set the form action
+    });
+</script>
+
+
+{% endblock %}

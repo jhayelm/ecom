@@ -1,0 +1,170 @@
+{% extends "base_seller.html" %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='messages.css') }}">
+
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex align-items-center" action="{{ url_for('seller_inventory.seller_inventory') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search products..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+            
+                <!-- Reset Button -->
+                <a href="{{ url_for('seller_inventory.seller_inventory', category=selected_category, sort=selected_sort) }}" class="btn btn-dark ms-2">Reset</a>
+            
+                <!-- Hidden fields to preserve filter and sort state -->
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                <input type="hidden" name="sort" value="{{ selected_sort }}">
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="data:image/jpeg;base64,{{ shop_profile.Shop_Profile|b64encode }}" 
+                        alt="Shop Image" 
+                        class="img-fluid border rounded-circle border-secondary border-2"
+                        style="width: 40px; height: 40px">                
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="d-flex flex-column gap-0">
+                    <div class="" >
+                        {{ shop_profile.Shop_Name }}
+                    </div>
+                    <div class="text-secondary d-none" style="font-size: 0.7rem">
+                        {{ session['user_name'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+        <div>
+            <h3>Messages</h3>
+            <p class="mt-1"><small class="text-muted">Here's the recent messages.</small></p>
+        </div>
+    
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/filter.png') }}" alt="Filter Icon" class="me-1" style="width: 1rem;">
+                Filter
+            </button>
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/sort.png') }}" alt="Sort Icon" class="me-1" style="width: 1rem;">
+                Sort
+            </button>
+        </div>
+    </div>
+
+    <div class="d-flex flex-row">
+        <div class="first-row w-30">
+            <!-- Profile List -->
+            <div class="profile-list d-grid">
+                <!-- Profile Item -->
+                <div class="profile-item d-flex align-items-center">
+                    <img src="profile1.jpg" alt="Profile Picture" class="profile-pic">
+                    <div class="profile-info">
+                        <p class="profile-name">John Doe</p>
+                        <p class="profile-chat">Hey, are you coming today?</p>
+                        <p class="profile-date">2:00 PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="second-row w-70">
+
+            <div class="message-container">
+                <div class="message-list">
+                    <img src="profile1.jpg" alt="Profile Picture" class="profile-pic">
+                    <h4>Name</h4>
+                    <p>Phone</p>
+                    <p>Email</p>
+
+
+                    <!-- Sent Message -->
+                    <div class="message sent">
+                        <img src="profile1.jpg" alt="Profile Picture" class="profile-pic">
+
+                        <div class="message-bubble">
+                            <p>Hey! Are you ready to check out the new items?</p>
+                        </div>
+                        <div class="message-time">2:35 PM</div>
+                    </div>
+
+                    <!-- Received Message -->
+                    <div class="message received">
+                        <div class="message-bubble">
+                            <p>Yes! Just finishing up the current order.</p>
+                        </div>
+                        <div class="message-time">2:36 PM</div>
+                    </div>
+
+                    <!-- Sent Message -->
+                    <div class="message sent">
+                        <div class="message-bubble">
+                            <p>Great! Let me know if you need anything.</p>
+                        </div>
+                        <div class="message-time">2:37 PM</div>
+                    </div>
+
+                    <!-- Received Message -->
+                    <div class="message received">
+                        <div class="message-bubble">
+                            <p>Will do, thanks!</p>
+                        </div>
+                        <div class="message-time">2:38 PM</div>
+                    </div>
+                </div>
+
+                <!-- Message Input Section -->
+                <div class="message-input d-flex align-items-center">
+                    <textarea class="form-control" rows="2" placeholder="Type a message..."></textarea>
+                    <button class="btn btn-primary send-button ms-2">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

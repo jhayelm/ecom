@@ -1,0 +1,279 @@
+{% extends "base_buyer.html" %}
+
+{% block title %}Fenamaz - Homepage{% endblock %}
+    
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="hero-section">
+    <!-- Background Cover -->
+    <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{{ url_for('static', filename='img/cover/fenamaz_cover3.jpg') }}" class="d-block w-100" alt="Image 1">
+            </div>
+            
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='img/cover/fenamaz_cover4.png') }}" class="d-block w-100" alt="Image 2">
+            </div>
+
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='img/cover/fenamaz_cover2.png') }}" class="d-block w-100" alt="Image 2">
+            </div>
+            
+            
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+<!-- END - HERO SECTION -->
+
+<!-- MAIN SECTION -->
+<main>
+    <!-- CATEGORIES -->
+    <div class="categories-container">
+        <p class="text-center">CATEGORIES</p>
+        <h1 class="text-center mb-5 fw-bold">Discover the Best in Tech Gadgets</h1>
+        <div id="gadgetCarousel" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/mobile_phone.png') }}" class="card-img-top" alt="Mobile Phone">
+                                    <h6 class="card-title">Mobile Phone</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/desktop.png') }}" class="card-img-top" alt="Desktop">
+                                    <h6 class="card-title">Desktop</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/laptop.png') }}" class="card-img-top" alt="Laptop">
+                                    <h6 class="card-title">Laptop</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/audio_equip.png') }}" class="card-img-top" alt="Audio Equipment">
+                                    <h6 class="card-title">Audio Equipment</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/vid_equip.png') }}" class="card-img-top" alt="Video Equipment">
+                                    <h6 class="card-title">Video Equipment</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/smart_home_device.png') }}" class="card-img-top" alt="Smart Home Devices">
+                                    <h6 class="card-title">Smart Home Devices</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/photography.png') }}" class="card-img-top" alt="Photography">
+                                    <h6 class="card-title">Photography</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/wear_tech.png') }}" class="card-img-top" alt="Wearable Technology">
+                                    <h6 class="card-title">Wearable Technology</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/digital_accs.png') }}" class="card-img-top" alt="Digital Accessories">
+                                    <h6 class="card-title">Digital Accessories</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-img-container">
+                                    <img src="{{ url_for('static', filename='img/categories/others.png') }}" class="card-img-top" alt="Others">
+                                    <h6 class="card-title">Others</h6>
+                                </div>
+                            </div>
+                        </div>                          
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#gadgetCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#gadgetCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <!-- END - CATEGORIES -->
+
+    <!-- TOP SELLING PRODUCTS -->
+    <div class="top-selling-container">
+        <h3 class="top-selling-header">Top Selling</h3>
+        <div id="topSellingCarousel" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-inner">
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="row justify-content-around">
+                        <div class="col-6 col-md-3 mb-4">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="Acer Nitro V" class="img-fluid">
+                                <h6>Acer Nitro V</h6>
+                                <p>PHP 54,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-4">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="Acer Aspire 7" class="img-fluid">
+                                <h6>Acer Aspire 7</h6>
+                                <p>PHP 45,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-4 d-none d-md-block">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="ASUS ROG Zephyrus" class="img-fluid">
+                                <h6>ASUS ROG Zephyrus</h6>
+                                <p>PHP 75,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-4 d-none d-md-block">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="Dell XPS 13" class="img-fluid">
+                                <h6>Dell XPS 13</h6>
+                                <p>PHP 65,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="row justify-content-around">
+                        <div class="col-6 col-md-3 mb-4">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="HP Spectre x360" class="img-fluid">
+                                <h6>HP Spectre x360</h6>
+                                <p>PHP 70,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-4">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="Samsung Galaxy Book" class="img-fluid">
+                                <h6>Samsung Galaxy Book</h6>
+                                <p>PHP 60,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-4 d-none d-md-block">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="Xiaomi Mi Laptop" class="img-fluid">
+                                <h6>Xiaomi Mi Laptop</h6>
+                                <p>PHP 45,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-4 d-none d-md-block">
+                            <div class="top-selling-card">
+                                <img src="{{ url_for('static', filename='img/products/acer_nitro.png') }}" alt="MSI GS65" class="img-fluid">
+                                <h6>MSI GS65</h6>
+                                <p>PHP 85,000</p>
+                                <button class="add-to-cart-btn">
+                                    <img src="{{ url_for('static', filename='img/icons/add_to_cart.png') }}" alt="Cart Icon">
+                                    <p>Add To Cart</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-control-prev" type="button" data-bs-target="#topSellingCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#topSellingCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- END - TOP SELLING PRODUCTS -->
+
+</main>
+<!-- END - MAIN SECTION -->
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

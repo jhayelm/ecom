@@ -1,0 +1,126 @@
+.add-product-container {
+    width: 500px; 
+}
+
+.alert-container {
+    padding: 0 0.7rem;
+}
+
+.add-product-container .modal-content {
+    padding: 1rem;
+}
+
+.add-product-container .modal-header {
+    border: none;
+}
+
+.add-product-container label {
+    font-size: 0.8rem;
+}
+
+.add-product-container .modal-header button {
+    font-size: 0.8rem;
+}
+
+.add-product-container .modal-header h6 {
+    color: #0d6efd;
+}
+
+.product-image-container {
+    width: 120px;   
+    height: 80px; 
+    overflow: hidden; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    border-radius: 10px;
+    margin-left: 1.5rem;
+}
+
+.product-image {
+    width: 100%;   /* Let the image take up the full width of the container */
+    height: 100%;  /* Let the image take up the full height of the container */
+    object-fit: cover; /* Crop and fill the container, maintaining aspect ratio */
+}
+
+
+.btn-outline-primary:not(.btn-archive) {
+    border: solid 2px #0d6efd;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-outline-danger {
+    border: solid 1px red;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-ban {
+    border: solid 1px #dc3545;
+}
+
+
+.btn-archive, .btn-edit {
+    border: solid 1px #0d6efd;
+}
+
+.btn-outline-primary img {
+    width: .8rem;
+}
+
+.table-container {
+    padding: 0 0.8rem;
+}
+
+.notifications-list {
+    padding: 0 0.8rem;
+
+}
+
+.bg-read {
+    background-color: rgb(13, 110, 253, 0.1);
+}
+
+
+.table-responsive {
+    position: relative;
+    padding: 0 0.7rem;
+}
+
+.actions-column {
+    position: sticky;
+    right: 0;
+    background-color: #fff;
+    z-index: 10;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure the checkbox column and other columns are styled correctly */
+thead th, tbody td {
+    text-align: center;
+}
+
+thead {
+    padding: 0.5rem 0;
+}
+
+tbody td, tbody td p {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.sidebar-link .badge {
+    margin-left: auto;
+    display: inline-block;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+}
+
+

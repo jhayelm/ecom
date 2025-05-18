@@ -1,0 +1,48 @@
+name: fenamaz
+description: A Flutter e-commerce application with MySQL integration
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  mysql1: ^0.20.0
+  provider: ^6.0.5
+  shared_preferences: ^2.2.0
+  image_picker: ^1.0.4
+  cached_network_image: ^3.3.0
+  intl: ^0.18.1
+  flutter_secure_storage: ^9.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  
+  
+  assets:
+    - assets/images/
+    - assets/images/fenamaz_logo.svg
+    - assets/images/banner1.png
+    - assets/images/banner2.png
+    - assets/images/category_mobile.png
+    - assets/images/category_desktop.png
+    - assets/images/category_laptop.png
+    - assets/images/category_audio.png
+    - assets/images/category_video.png
+    - assets/images/category_smart.png
+    - assets/images/category_photo.png
+    - assets/images/category_wearable.png
+    - assets/images/category_accessories.png
+    - assets/images/category_others.png
+    - assets/images/product1.png
+    - assets/images/product2.png
+    - assets/images/product3.png
+    - assets/images/product4.png

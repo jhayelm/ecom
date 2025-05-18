@@ -1,0 +1,143 @@
+/* Ensure full height of container and body */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container takes full viewport height */
+.container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    flex-direction: column; /* If you want vertical space for different sections */
+}
+
+/* The row-container will now arrange items horizontally using Flexbox */
+.row-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%; /* Ensures the row takes the full width */
+}
+
+/* Sidebar styling */
+.sidebar {
+    flex: 0 0 300px; /* Fixed width for the sidebar */
+    padding: 20px;
+    border-right: 2px solid #ddd;
+}
+
+/* Profile section style */
+.profile-section img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+}
+
+
+/* Navigation button style */
+.list-group {
+    list-style-type: none;
+    padding: 0;
+    border: none;
+}
+
+.list-group-item {
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    text-align: left;
+    background-color: none;
+    position: relative; /* Required for the position of the span */
+}
+
+
+/* Styling for the line */
+.list-group-item .line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0; /* Start with no width */
+    background-color: transparent;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Hover effect for the line */
+.list-group-item:hover .line {
+    width: 4px; /* Expand line width when hovered */
+    background-color: #007bff; /* Blue color on hover */
+}
+
+/* Active effect for the line */
+.list-group-item.active-nav .line {
+    width: 4px;
+    background-color: #007bff; /* Blue line when active */
+}
+
+/* Hover effect for the entire item */
+.list-group-item:hover {
+    background-color: #f0f0f0; /* Light background when hovering */
+}
+
+/* Active navigation button style */
+.list-group-item.active-nav {
+    background-color: #f0f0f0; /* Light background when active */
+}
+
+
+/* Right side content */
+.content {
+    flex: 1; /* This ensures that the content takes the remaining width */
+    padding: 20px;
+    background-color: #fff;
+    overflow-y: auto; /* Allows scrolling if content overflows */
+}
+
+.card-content {
+    background-color: #fff;
+    padding: 1rem 2rem;
+}
+
+.card-content h4 {
+    font-size: 1.5em;
+}
+
+
+.item-header {
+    font-size: 0.85rem;
+}
+
+.item-content {
+    font-size: 1.5rem;
+}
+
+
+.add-product-container {
+    width: 500px; 
+}
+
+.alert-container {
+    padding: 0 0.7rem;
+}
+
+.add-product-container .modal-content {
+    padding: 1rem;
+}
+
+.add-product-container .modal-header {
+    border: none;
+}
+
+.add-product-container label {
+    font-size: 0.85rem;
+}
+
+.add-product-container .modal-header button {
+    font-size: 0.8rem;
+}
+
+.add-product-container .modal-header h6 {
+    color: #0d6efd;
+}

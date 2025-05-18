@@ -1,0 +1,47 @@
+{% extends "base_login.html" %}
+
+{% block title %}Fenamaz - Forgot Password{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container login-container">
+        <div class="d-flex justify-content-between mb-4">
+            <h2 class="fs-3" style="font-weight: 600;">Forgot Password</h2>
+            <a href="/" class="exit-icon text-dark">
+                <i class="bi bi-x fs-3"></i>
+            </a>
+        </div>
+
+        <!-- Message Box -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} 
+
+        <form action="{{ url_for('login.forgot_pass') }}" method="POST">
+            <p class="mb-4">
+                Note: Enter you email to reset your password. An otp will be sent to your email.
+            </p>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter registered email" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Send OTP</button>
+        </form>
+
+        <div class="mt-4 text-center d-flex justify-content-between">
+            <p>Remembered your password?</p>
+            <a href="{{ url_for('login.login') }}" class="text-primary">Login Now!</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

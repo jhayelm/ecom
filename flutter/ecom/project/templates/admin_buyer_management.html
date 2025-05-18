@@ -1,0 +1,265 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Buyer Management{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='table.css') }}">
+
+<nav class="navbar navbar-expand">
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/admin_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex" action="{{ url_for('admin_buyer_management.admin_buyer_management') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search buyers..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+                <!-- Reset Button -->
+                <a href="{{ url_for('admin_buyer_management.admin_buyer_management') }}" class="btn btn-dark ms-2">Reset</a>
+                
+                <!-- Hidden fields to preserve sort and status state -->
+                <input type="hidden" name="status" value="{{ current_status }}">
+                <input type="hidden" name="sort" value="{{ selected_sort }}">
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="{{ url_for('static', filename='img/admin_navs/admin_logo.png') }}" alt="Profile" style="cursor: pointer;">             
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="" style="font-size: 1rem">
+                    {{ session['user_name'] }}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Content Section -->
+<main class="content">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div>
+            <h3>
+                {% if current_status == 'Archived' %}
+                    Archived Buyers
+                {% elif current_status == 'Banned' %}
+                    Banned Buyers
+                {% else %}
+                    Active Buyers
+                {% endif %}
+            </h3>
+            <p class="mt-1">
+                <small class="text-muted">
+                    {% if current_status == 'Archived' %}
+                        Here's the archived buyers.
+                    {% elif current_status == 'Banned' %}
+                        Here's the banned buyers.
+                    {% else %}
+                        Here's the active buyers.
+                    {% endif %}
+                </small>
+            </p>
+        </div>
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li><a class="dropdown-item {% if selected_sort == 'recent' %}active{% endif %}" href="{{ url_for('admin_buyer_management.admin_buyer_management', sort='recent', search=search, status=current_status) }}">Recent</a></li>
+                    <li><a class="dropdown-item {% if selected_sort == 'oldest' %}active{% endif %}" href="{{ url_for('admin_buyer_management.admin_buyer_management', sort='oldest', search=search, status=current_status) }}">Oldest</a></li>
+                </ul>
+            </div>
+            
+            {% if current_status == 'Archived' %}
+                <!-- Show Active Button -->
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_buyer_management.admin_buyer_management', status='Registered') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                    Show Active
+                </button>
+            {% elif current_status == 'Banned' %}
+                <!-- Show Active Button -->
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_buyer_management.admin_buyer_management', status='Registered') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/active.png') }}" alt="Show Active Icon" class="me-1" style="width: 1rem;">
+                    Show Active
+                </button>
+            {% else %}
+                <!-- Show Archived Button -->
+                <button class="btn btn-primary d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_buyer_management.admin_buyer_management', status='Archived') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Archived Icon" class="me-1" style="width: 1rem;">
+                    Show Archived
+                </button>
+                <!-- Show Banned Button -->
+                <button class="btn btn-danger d-flex align-items-center" onclick="window.location.href='{{ url_for('admin_buyer_management.admin_buyer_management', status='Banned') }}'">
+                    <img src="{{ url_for('static', filename='img/icons/archive.png') }}" alt="Show Banned Icon" class="me-1" style="width: 1rem;">
+                    Show Banned
+                </button>
+            {% endif %}
+        </div>
+        
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="alert-container">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Buyer Table -->
+    <div class="table-responsive table-container" style="overflow-x: auto;">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="bg-primary text-white">No.</th>
+                    <th class="bg-primary text-white">Full Name</th>
+                    <th class="bg-primary text-white">Age</th>
+                    <th class="bg-primary text-white">Sex</th>
+                    <th class="bg-primary text-white">Phone</th>
+                    <th class="bg-primary text-white">Email</th>
+                    <th class="bg-primary text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for buyer in buyers %}
+                    <tr>
+                        <td>{{ loop.index + (page - 1) * limit }}</td>
+                        <td>{{ buyer.Full_Name }}</td>
+                        <td>{{ buyer.Age }}</td>
+                        <td>{{ buyer.Sex }}</td>
+                        <td>{{ buyer.Phone_Number }}</td>
+                        <td>{{ buyer.Email_Address }}</td>
+                        <td class="actions-column">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+
+                                {% if current_status == 'Archived' %}
+                                    <!-- Unarchive button -->
+                                    <form action="{{ url_for('admin_buyer_management.unarchive_buyer', buyer_id=buyer.Buyer_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_buyer_management.unarchive_buyer', buyer_id=buyer.Buyer_ID) }}"
+                                                data-notification-title="{{ buyer.Full_Name }}"
+                                                data-action-type="unarchive">
+                                            Unarchive
+                                        </button>                                    
+                                    </form>
+                                {% elif current_status == 'Banned' %}
+                                    <!-- Unban button -->
+                                    <form action="{{ url_for('admin_buyer_management.unban_buyer', buyer_id=buyer.Buyer_ID) }}" method="post" style="display: inline;">
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                data-action="{{ url_for('admin_buyer_management.unban_buyer', buyer_id=buyer.Buyer_ID) }}"
+                                                data-notification-title="{{ buyer.Full_Name }}"
+                                                data-action-type="unban">
+                                            Unban
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <!-- Archive and Ban buttons -->
+                                        <form action="{{ url_for('admin_buyer_management.archive_buyer', buyer_id=buyer.Buyer_ID) }}" method="post" style="display: inline;">
+                                            <!-- Archive Button -->
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                    data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                    data-action="{{ url_for('admin_buyer_management.archive_buyer', buyer_id=buyer.Buyer_ID) }}"
+                                                    data-notification-title="{{ buyer.Full_Name }}"
+                                                    data-action-type="archive">
+                                                Archive
+                                            </button>
+
+                                        </form>
+                                        <form action="{{ url_for('admin_buyer_management.ban_buyer', buyer_id=buyer.Buyer_ID) }}" method="post" style="display: inline;">
+                                             <!-- Ban Button -->
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                    data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                    data-action="{{ url_for('admin_buyer_management.ban_buyer', buyer_id=buyer.Buyer_ID) }}"
+                                                    data-notification-title="{{ buyer.Full_Name }}"
+                                                    data-action-type="ban">
+                                                Ban
+                                            </button>
+                                        </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+        <!-- Previous Button -->
+        {% if page > 1 %}
+            <a href="{{ url_for('admin_buyer_management.admin_buyer_management', page=page-1, search=search) }}" class="btn btn-primary">Prev</a>
+        {% endif %}
+    
+        <!-- Page Info -->
+        <span>Page {{ page }} of {{ total_pages }}</span>
+    
+        <!-- Next Button -->
+        {% if page < total_pages %}
+            <a href="{{ url_for('admin_buyer_management.admin_buyer_management', page=page+1, search=search) }}" class="btn btn-primary">Next</a>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-indent: 2rem;">
+                Are you sure you want to <span class="text-dark fw-bold" id="actionType"></span> the buyer <span class="text-primary fw-bold" id="buyerName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="confirmActionForm" method="post">
+                    <button type="submit" class="btn btn-primary" id="confirmActionButton">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Button that triggered the modal
+        const actionUrl = button.getAttribute('data-action'); // Get the action URL (archive/unarchive/ban/unban)
+        const buyerName = button.getAttribute('data-notification-title'); // Get buyer's name
+        const actionType = button.getAttribute('data-action-type'); // Get action type (archive, unarchive, ban, unban)
+
+        // Set modal content dynamically
+        document.getElementById('actionType').textContent = actionType;
+        document.getElementById('buyerName').textContent = buyerName;
+        document.getElementById('confirmActionForm').action = actionUrl; // Set the form action URL
+    });
+</script>
+
+{% endblock %}

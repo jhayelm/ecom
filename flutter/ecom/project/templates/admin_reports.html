@@ -1,0 +1,78 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/admin_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-primary d-flex align-items-center justify-content-center" type="submit" style="width: 3rem; height: auto;">
+                    <img src="{{ url_for('static', filename='img/icons/search.png') }}" alt="Search Icon" style="width: 100%; height: 100%; object-fit: contain;">
+                </button>
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="{{ url_for('static', filename='img/admin_navs/admin_logo.png') }}" alt="Profile" style="cursor: pointer;">             
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="" style="font-size: 1rem">
+                    {{ session['user_name'] }}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Content Section -->
+<div class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+        <div>
+            <h3>Reports</h3>
+            <p class="mt-1"><small class="text-muted">Here's the recent reports.</small></p>
+        </div>
+    
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/filter.png') }}" alt="Filter Icon" class="me-1" style="width: 1rem;">
+                Filter
+            </button>
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/sort.png') }}" alt="Sort Icon" class="me-1" style="width: 1rem;">
+                Sort
+            </button>
+        </div>
+    
+    </div>
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

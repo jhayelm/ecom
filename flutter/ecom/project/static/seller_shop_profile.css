@@ -1,0 +1,68 @@
+.btn-outline-primary:not(.btn-archive) {
+    border: solid 2px #0d6efd;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.shop-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10rem;
+    height: 100vh;
+}
+
+.shop-profile-container .icons {
+    width: 90px; 
+    height: 90px; 
+    border-radius: 1rem; 
+    font-size: 3rem; 
+    font-weight: 200;
+    color: #0d6efd;
+}
+
+
+.shop-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 2rem;
+}
+
+.shop-image-container {
+    width: 450px; 
+    height: 450px; 
+}
+
+.shop-image-container img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+    border-radius: 100rem;
+}
+
+.shop-info {
+    display: flex;
+    flex-direction: column;
+    padding-top: 2rem;
+}
+
+.shop-info {
+    font-size: 1.2rem;
+}
+
+.shop-info img {
+    height: 50px;
+    width: 50px;
+}
+
+.service-info {
+    display: flex;
+    flex-direction: row;
+    gap: 10rem;
+
+}
+

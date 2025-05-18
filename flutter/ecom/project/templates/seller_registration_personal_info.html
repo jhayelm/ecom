@@ -1,0 +1,95 @@
+{% extends "base_login.html" %}
+
+{% block title %}Register - Personal Information{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container registration-container">
+        <a href="{{ url_for('login.user_choose') }}" class="exit-icon text-dark">
+            <i class="bi bi-arrow-left fs-4 px-2"></i>
+        </a>
+        <h2 class="mb-4 fs-3" style="font-weight: 600;">Register!</h2>
+        <h3 class="mb-3 fs-6" style="font-weight: 500;"><strong>Step 1:</strong> Personal Information</h3>
+
+        <!-- Message Box -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('seller_registration.seller_personal_info') }}" method="POST" id="registrationForm">
+            <div class="mb-3">
+                <label for="firstname" class="form-label">First Name*</label>
+                <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" required oninput="letters_only(this)">
+            </div>
+
+            <div class="mb-3">
+                <label for="middlename" class="form-label">Middle Name*</label>
+                <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter your middle name" required oninput="letters_only(this)">
+            </div>
+
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="lastname" class="form-label">Last Name*</label>
+                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter your last name" required oninput="letters_only(this)">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="suffix" class="form-label">Suffix</label>
+                    <select class="form-control" id="suffix" name="suffix">
+                        <option value="">None</option>
+                        <option value="Jr">Jr</option>
+                        <option value="Sr">Sr</option>
+                        <option value="II">II</option>
+                        <option value="III">III</option>
+                        <option value="IV">IV</option>
+                        <option value="V">V</option>
+                        <option value="VI">VI</option>
+                        <option value="VII">VII</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="sex" class="form-label">Sex*</label>
+                    <select class="form-control" id="sex" name="sex" required>
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="birthdate" class="form-label">Birthdate*</label>
+                    <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Next</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // JavaScript to set the max date to today
+    document.addEventListener("DOMContentLoaded", function() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        today = yyyy + '-' + mm + '-' + dd;
+
+        document.getElementById('birthdate').setAttribute('max', today);
+    });
+
+</script>
+
+{% endblock %}

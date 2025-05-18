@@ -1,0 +1,52 @@
+{% extends "base_admin.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <div>
+        <h3>User Management</h3>
+        <p class="mt-1"><small class="text-muted">Take a look at the current users.</small></p>
+    </div>
+
+    <div class="btn-container d-flex flex-wrap gap-2">
+        <button class="btn ghost-button d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/icons/filter.png') }}" alt="Filter Icon" class="me-1" style="width: 1rem;">
+            Filter
+        </button>
+        <button class="btn ghost-button d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/icons/sort.png') }}" alt="Sort Icon" class="me-1" style="width: 1rem;">
+            Sort
+        </button>
+    </div>
+
+    <!-- Profile Dropdown -->
+    <div class="btn-group">
+        <div class="d-flex flex-row align-items-center px-1">
+            <button type="button" class="btn btn-link profile">
+                <img src="{{ url_for('static', filename='img/admin_navs/admin_logo.png') }}" alt="Profile" style="cursor: pointer;">             
+            </button>
+            <span class="d-none">
+                User ID: {{ session['user_id'] }}
+            </span>
+            <div class="" style="font-size: 1rem">
+                {{ session['user_name'] }}
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

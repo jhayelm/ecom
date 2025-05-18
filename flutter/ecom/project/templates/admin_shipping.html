@@ -1,0 +1,273 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Shipping Orders{% endblock %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex align-items-center" action="{{ url_for('admin_shipping.admin_shipping') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search orders..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+            
+                <!-- Reset Button -->
+                <a href="{{ url_for('admin_shipping.admin_shipping', filter=selected_filter, sort=selected_sort) }}" class="btn btn-dark ms-2">Reset</a>
+            
+                <!-- Hidden fields to preserve filter and sort state -->
+                <input type="hidden" name="filter" value="{{ selected_filter }}">
+                <input type="hidden" name="sort" value="{{ selected_sort }}">
+            </form>
+            
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="{{ url_for('static', filename='img/admin_navs/admin_logo.png') }}" alt="Profile" style="cursor: pointer;">             
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="" style="font-size: 1rem">
+                    {{ session['user_name'] }}
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+    
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        
+        {% if selected_filter == 'Packed' %}
+            <div>
+                <h3>Packed Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current packed orders.</small></p>
+            </div>
+        {% elif selected_filter == 'Shipped' %}
+            <div>
+                <h3>Shipped Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current shipped orders.</small></p>
+            </div>
+        {% elif selected_filter == 'For Delivery' %}
+        <div>
+            <h3>For Delivery</h3>
+            <p class="mt-1"><small class="text-muted">Here's your current for delivery orders.</small></p>
+        </div>
+        {% elif selected_filter == 'Delivered' %}
+            <div>
+                <h3>Delivered Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current delivered orders.</small></p>
+            </div>
+        {% elif selected_filter == 'Completed' %}
+            <div>
+                <h3>Completed Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current completed orders.</small></p>
+            </div>
+        {% else %}
+            <div>
+                <h3>Shipping Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current shipping orders.</small></p>
+            </div>
+        {% endif %}
+
+        <div class="btn-container d-flex flex-wrap gap-2">
+
+            <!-- Sort by Date -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li>
+                        <a class="dropdown-item {% if selected_sort == 'recent' %}active{% endif %}" 
+                           href="{{ url_for('admin_shipping.admin_shipping', sort='recent', filter=selected_filter, search=search) }}">
+                           Recent
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if selected_sort == 'oldest' %}active{% endif %}" 
+                           href="{{ url_for('admin_shipping.admin_shipping', sort='oldest', filter=selected_filter, search=search) }}">
+                           Oldest
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Filter by Order Type -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter by Status
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <li><a class="dropdown-item {% if selected_filter == 'Packed' %}active{% endif %}" href="{{ url_for('admin_shipping.admin_shipping', filter='Packed', sort=selected_sort, search=search) }}">Packed</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Shipped' %}active{% endif %}" href="{{ url_for('admin_shipping.admin_shipping', filter='Shipped', sort=selected_sort, search=search) }}">Shipped</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'For Delivery' %}active{% endif %}" href="{{ url_for('admin_shipping.admin_shipping', filter='For Delivery', sort=selected_sort, search=search) }}">For Delivery</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Delivered' %}active{% endif %}" href="{{ url_for('admin_shipping.admin_shipping', filter='Delivered', sort=selected_sort, search=search) }}">Delivered</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Completed' %}active{% endif %}" href="{{ url_for('admin_shipping.admin_shipping', filter='Completed', sort=selected_sort, search=search) }}">Completed</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Order Table -->
+    <div class="table-responsive table-container" style="overflow-x: auto;">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="bg-primary text-white">No.</th>
+                    <th class="bg-primary text-white d-none">Product ID</th>
+                    <th class="bg-primary text-white d-none">Seller ID</th>
+                    <th class="bg-primary text-white d-none">Shop ID</th>
+                    <th class="bg-primary text-white d-none">Buyer ID</th>
+                    <th class="bg-primary text-white">Product Name</th>
+                    <th class="bg-primary text-white d-none">Shop Name</th>
+                    <th class="bg-primary text-white">Seller Name</th>
+                    <th class="bg-primary text-white">Buyer Name</th>
+                    <th class="bg-primary text-white">Quantity</th>
+                    <th class="bg-primary text-white">Total Amount</th>
+                    <th class="bg-primary text-white">Payment</th>
+                    <th class="bg-primary text-white">Status</th>
+                    {% if selected_filter == 'Packed' %}
+                    <th class="bg-primary text-white">Actions</th>
+                    {% elif selected_filter == 'Shipped' %}
+                    <th class="bg-primary text-white">Courier</th>
+                    {% elif selected_filter == 'For Delivery' %}
+                    <th class="bg-primary text-white">Actions</th>
+                    {% elif selected_filter == 'Delivered' %}
+                    <th class="bg-primary text-white">Actions</th>
+                    {% endif %}
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="d-none">{{ order.Product_ID }}</td>
+                    <td class="d-none">{{ order.Seller_ID }}</td>
+                    <td class="d-none">{{ order.Shop_ID }}</td>
+                    <td class="d-none">{{ order.Buyer_ID }}</td>
+                    <td>{{ order.Product_Name }}</td>
+                    <td class="d-none">{{ order.Shop_Name }}</td>
+                    <td>{{ order.seller_name }}</td>
+                    <td>{{ order.buyer_name }}</td>
+                    <td>{{ order.Quantity }}</td>
+                    <td>PHP {{ "{:,.2f}".format(order.Total_Amount) }}</td>
+                    <td>{{ order.Payment_Method }} - {{ order.Payment_Status }}</td>
+                    <td>{{ order.Status }}</td>
+
+                    <!-- Courier Selection Dropdown when Status is Shipped -->
+                    {% if order.Status == 'Shipped' %}
+                    <td>
+                        <form method="POST" action="{{ url_for('admin_shipping.assign_courier') }}">
+                            <div class="d-flex flex-row w-100 gap-2 justify-content-center">
+                                <div class="form-group">
+                                    <!-- Hidden order_id field -->
+                                    <input type="hidden" name="order_id" value="{{ order.Order_ID }}">
+
+                                    <select class="form-control" name="courier_id" id="courier_id" required>
+                                        <option value="">Select Courier</option>
+                                        {% for courier in couriers %}
+                                            <option value="{{ courier.Courier_ID }}">{{ courier.Firstname }} {{ courier.Lastname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Assign</button>
+                            </div>
+                        </form>
+                    </td>
+                    {% endif %}
+
+                    
+                    <!-- Column for Shipped button when Status is Packed -->
+                    {% if order.Status == 'Packed' %}
+                    <td>
+                        <!-- Status Packed: Display the Shipped button -->
+                        <form action="{{ url_for('admin_shipping.update_shipping_status') }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="order_id" value="{{ order.Order_ID }}">
+                            <button type="submit" class="btn btn-primary btn-sm">Shipped</button>
+                        </form>
+                    </td>
+
+                    {% elif order.Status == 'Shipped' %}
+                    <td>
+                        <!-- Assign Courier Button when Status is Shipped -->
+                        <form action="{{ url_for('admin_shipping.assign_courier') }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="order_id" value="{{ order.Order_ID }}">
+                            <button type="submit" class="d-none btn btn-primary btn-sm mt-2">Assign Courier</button>
+                        </form>
+                    </td>
+
+                    {% elif order.Status == 'For Delivery' %}
+                        <td>
+                            <!-- Status Packed: Display the Shipped button -->
+                            <form action="{{ url_for('admin_shipping.update_delivered_status') }}" method="POST" style="display:inline;">
+                                <input type="hidden" name="order_id" value="{{ order.Order_ID }}">
+                                <button type="submit" class="btn btn-primary btn-sm">Delivered</button>
+                            </form>
+                        </td>
+                    
+                    {% elif order.Status == 'Delivered' %}
+                        <td>Waiting to received.</td>
+                    
+                    {% endif %}
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Pagination -->
+    <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+        {% if page > 1 %}
+            <a href="{{ url_for('admin_shipping.admin_shipping', page=page-1, search=search, filter=selected_filter, sort=selected_sort) }}" class="btn btn-primary">Previous</a>
+        {% endif %}
+
+        <span>Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('admin_shipping.admin_shipping', page=page+1, search=search, filter=selected_filter, sort=selected_sort) }}" class="btn btn-primary">Next</a>
+        {% endif %}
+    </div>
+
+</main>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='table.css') }}">
+
+{% endblock %}

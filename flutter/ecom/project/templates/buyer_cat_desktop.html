@@ -1,0 +1,1040 @@
+{% extends "base_buyer.html" %}
+
+{% block title %}Desktop{% endblock %}
+
+{% block content %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<!-- MESSAGE BOX -->
+{% with messages = get_flashed_messages(with_categories=True) %}
+{% if messages %}
+    <div class="alert-container">
+    {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
+<!-- END - MESSAGE BOX -->
+
+<div class="container-fluid cat-container d-flex flex-column flex-lg-row">
+
+    <div class="d-flex flex-column gap-1"> 
+        <form method="get" action="{{ url_for('buyer.buyer_cat_desktop') }}">
+
+            <div class="price-filter-panel d-flex flex-column gap-3">
+                <h5 class="text-secondary mb-4">Filter</h5>
+                
+                <!-- Price Range Filter (Already Provided) -->
+                <div class="position-relative">
+                    <div class="d-flex justify-content-between gap-2">
+                        <div class="w-100">
+                            <label for="minPrice" class="form-label">Min Price (PHP)</label>
+                            <select id="minPrice" name="min_price" class="form-select" onchange="updatePriceDisplay()">
+                                <option value="0" {% if min_price == 0 %}selected{% endif %}>₱ 0</option>
+                                <option value="100" {% if min_price == 100 %}selected{% endif %}>₱ 100</option>
+                                <option value="200" {% if min_price == 200 %}selected{% endif %}>₱ 200</option>
+                                <option value="500" {% if min_price == 500 %}selected{% endif %}>₱ 500</option>
+                                <option value="1000" {% if min_price == 1000 %}selected{% endif %}>₱ 1,000</option>
+                                <option value="5000" {% if min_price == 5000 %}selected{% endif %}>₱ 5,000</option>
+                                <option value="10000" {% if min_price == 10000 %}selected{% endif %}>₱ 10,000</option>
+                                <option value="20000" {% if min_price == 20000 %}selected{% endif %}>₱ 20,000</option>
+                                <option value="30000" {% if min_price == 30000 %}selected{% endif %}>₱ 30,000</option>
+                                <option value="40000" {% if min_price == 40000 %}selected{% endif %}>₱ 40,000</option>
+                                <option value="50000" {% if min_price == 50000 %}selected{% endif %}>₱ 50,000</option>
+                                <option value="60000" {% if min_price == 60000 %}selected{% endif %}>₱ 60,000</option>
+                                <option value="70000" {% if min_price == 70000 %}selected{% endif %}>₱ 70,000</option>
+                                <option value="80000" {% if min_price == 80000 %}selected{% endif %}>₱ 80,000</option>
+                                <option value="90000" {% if min_price == 90000 %}selected{% endif %}>₱ 90,000</option>
+                                <option value="100000" {% if min_price == 100000 %}selected{% endif %}>₱ 100,000+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="w-100">
+                            <label for="maxPrice" class="form-label">Max Price (PHP)</label>
+                            <select id="maxPrice" name="max_price" class="form-select" onchange="updatePriceDisplay()">
+                                <option value="0" {% if max_price == 0 %}selected{% endif %}>₱ 0</option>
+                                <option value="100" {% if max_price == 100 %}selected{% endif %}>₱ 100</option>
+                                <option value="200" {% if max_price == 200 %}selected{% endif %}>₱ 200</option>
+                                <option value="500" {% if max_price == 500 %}selected{% endif %}>₱ 500</option>
+                                <option value="1000" {% if max_price == 1000 %}selected{% endif %}>₱ 1,000</option>
+                                <option value="5000" {% if max_price == 5000 %}selected{% endif %}>₱ 5,000</option>
+                                <option value="10000" {% if max_price == 10000 %}selected{% endif %}>₱ 10,000</option>
+                                <option value="20000" {% if max_price == 20000 %}selected{% endif %}>₱ 20,000</option>
+                                <option value="30000" {% if max_price == 30000 %}selected{% endif %}>₱ 30,000</option>
+                                <option value="40000" {% if max_price == 40000 %}selected{% endif %}>₱ 40,000</option>
+                                <option value="50000" {% if max_price == 50000 %}selected{% endif %}>₱ 50,000</option>
+                                <option value="60000" {% if max_price == 60000 %}selected{% endif %}>₱ 60,000</option>
+                                <option value="70000" {% if max_price == 70000 %}selected{% endif %}>₱ 70,000</option>
+                                <option value="80000" {% if max_price == 80000 %}selected{% endif %}>₱ 80,000</option>
+                                <option value="90000" {% if max_price == 90000 %}selected{% endif %}>₱ 90,000</option>
+                                <option value="100000" {% if max_price == 100000 %}selected{% endif %}>₱ 100,000+</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="position-relative">
+                    <label for="sort" class="form-label">Sort by:</label>
+                    <select name="sort" id="sort" onchange="this.form.submit()" class="form-select">
+                        <option value="recent" {% if sort == 'recent' %}selected{% endif %}>Most Recent</option>
+                        <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                    </select>
+                </div>
+
+                <!-- Popularity Filter -->
+                <div class="position-relative mt-3 d-flex flex-column gap-3">
+                    <label for="popularity" class="form-label">Other</label>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="topSelling" onchange="updatePopularityFilter()">
+                        <label class="form-check-label" for="topSelling">Top Selling</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="popular" onchange="updatePopularityFilter()">
+                        <label class="form-check-label" for="popular">Popular</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="topViews" onchange="updatePopularityFilter()">
+                        <label class="form-check-label" for="topViews">Top Views</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="youMayLike" onchange="updatePopularityFilter()">
+                        <label class="form-check-label" for="youMayLike">You May Like</label>
+                    </div>
+                </div>
+            
+            </div>
+
+            <div class="d-flex flex-row gap-2 mt-3">
+                <button type="submit" class="btn btn-outline-dark w-50 " onclick="resetFilters()">Reset</button>
+                <button type="submit" class="btn btn-primary w-50 ">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="content flex-grow-1">
+        <div class="container-fluid mt-3">
+            <div class="row row-cols-1 row-cols-md-4 g-4 w-100" style="min-height: 200px;">
+                {% for product in products %}
+                <!-- Product Item -->
+                <div class="col ">
+                    <div class="product-item border rounded shadow-sm">
+                        <div class="product-image-container position-relative">
+                            <!-- Product image -->
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#productModal" onclick="showProductDetails({{ product['Product_ID'] }})">
+                                <img src="data:image/jpeg;base64,{{ product['Product_Main_Picture'] | b64encode | safe }}" 
+                                     alt="Product Image {{ product['Product_Name'] }}" 
+                                     class="product-image">
+                                <div class="hover-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+                                    <span class="fs-5 text-white">See Product</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="product-details mt-3 d-flex flex-column align-items-start">
+                            <!-- Product title linked to product details page -->
+                            <a href="#" class="text-dark">
+                                <h6 class="text-left fw-bold d-none">{{ product['Product_ID'] }}</h6>
+                                <h6 class="text-left fw-bold d-none">{{ product['Shop_ID'] }}</h6>
+                                <h6 class="text-left fw-bold d-none">{{ product['Seller_ID'] }}</h6>
+                                <h6 class="text-left fw-bold product-name">{{ product['Product_Name'] }}</h6>
+                                <p>₱ {{ "{:,.2f}".format(product['Product_Price']) }}</p>
+                            </a>
+                            <!-- Product Rating -->
+                            <div class="product-rating d-flex align-items-center flex-row mb-3">
+                                {% set rating = product['Average_Rating'] %}
+                                <div class="stars text-primary">
+                                    {% for i in range(5) %}
+                                        <i class="fa{{ 's' if i < rating|round(0) else 'r' }} fa-star"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="ms-2">{{ "{:.1f}".format(rating) }} </span>
+                            </div>
+                            <!-- Add to Cart Button -->
+                            <div class="product-rating d-flex align-items-center flex-row w-100 gap-2">
+                                <button data-bs-toggle="modal" data-bs-target="#productModal" onclick="showProductDetails({{ product['Product_ID'] }})"  class="btn btn-primary w-100" >Add to Cart
+                                        <img class = "d-none" src="data:image/jpeg;base64,{{ product['Product_Main_Picture'] | b64encode | safe }}" 
+                                             alt="Product Image {{ product['Product_Name'] }}" 
+                                             class="product-image">                              
+                                </button>
+                                {% if like_status.get(product['Product_ID'], False) %}
+                                    <!-- If the product is liked, show the unlike button -->
+                                    <form action="{{ url_for('buyer.unlike_product', product_id=product['Product_ID'], shop_id=product['Shop_ID'], seller_id=product['Seller_ID']) }}" method="POST">
+                                        <button class="btn btn-dark" type="submit">
+                                            <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <!-- If the product is not liked, show the like button -->
+                                    <form action="{{ url_for('buyer.like_product', product_id=product['Product_ID'], shop_id=product['Shop_ID'], seller_id=product['Seller_ID']) }}" method="POST">
+                                        <button class="btn btn-outline-dark" type="submit">
+                                            <i class="bi bi-heart" style="font-size: 1.1rem;"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>         
+        </div>
+     
+<!-- Modal for Product Details -->
+<!-- Modal Structure -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" id="customModalDialog"> <!-- Added custom ID -->
+        <div class="modal-content" id="customModalContent"> <!-- Added custom ID -->
+            <div class="modal-header" id="customModalHeader"> <!-- Added custom ID -->
+                <h5 class="modal-title" id="productModalLabel">Product Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="customModalBody"> <!-- Added custom ID -->
+
+                <!-- Product Image and Price Section -->
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <div id="productImage" class="product-image">
+                            <!-- Placeholder for Product Image -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="productPrice" class="h4 text-success">PHP 0.00</p>
+                        <p id="productDescription">Description will appear here.</p>
+                    </div>
+                </div>
+
+                <!-- Quantity Section -->
+                <div class="mb-3">
+                    <h6>Enter Quantity</h6>
+                    <p>How many units would you like to add to your cart?</p>
+                    <input type="number" id="quantityInput" class="form-control" placeholder="Enter Quantity" min="1" step="1">
+                    <small id="quantityError" class="text-danger" style="display:none;">Please enter a valid number greater than 0 and not greater than the available stock.</small>
+                </div>
+
+                <!-- Product Specifications Accordion -->
+                <div class="accordion" id="productSpecsAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSpecs">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpecs" aria-expanded="false" aria-controls="collapseSpecs">
+                                Product Specifications
+                            </button>
+                        </h2>
+                        <div id="collapseSpecs" class="accordion-collapse collapse" aria-labelledby="headingSpecs" data-bs-parent="#productSpecsAccordion">
+                            <div class="accordion-body" id="productSpecs">
+                                <!-- Product Specifications will populate here -->
+                                <p>No specifications available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <br>
+                <!-- Hidden Product IDs Section -->
+                <div class="d-none">
+                    <p id="productId"><strong>Product ID:</strong> N/A</p>
+                    <p id="productSeller"><strong>Seller ID:</strong> N/A</p>
+                    <p id="productInfoId"><strong>Product Info ID:</strong> N/A</p>
+                    <p id="productColorId"><strong>Product Color ID:</strong> N/A</p>
+                    <p id="productImageId"><strong>Product Image ID:</strong> N/A</p>
+                    <p id="productSpecsId"><strong>Product Specs ID:</strong> N/A</p>
+                    <!-- Add Buyer_ID from session -->
+                    <p id="buyerId"><strong></strong> {{ session['user_id'] }}</p> <!-- Display Buyer ID here -->
+                </div>
+
+                <!-- Product Category, Color, Stock -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between border p-3 rounded">
+                        <div class="col-3 border-end p-2">
+                            <strong class="label-large">CATEGORY</strong>
+                            <p id="productCategory" class="mt-2">Mobile</p>
+                        </div>
+                        <div class="col-3 border-end p-2">
+                            <strong class="label-large">COLOR</strong>
+                            <p id="productColor" class="mt-2">White</p>
+                        </div>
+                        <div class="col-3 p-2">
+                            <strong class="label-large">STOCK</strong>
+                            <p id="productStock" class="mt-2">25</p>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+            <div class="modal-footer" id="customModalFooter"> <!-- Added custom ID -->
+                <!-- Buy Now Button (Green) -->
+                <button type="button" class="btn btn-success" id="buyNowButton">Buy Now</button>
+                
+                <!-- Add to Cart Button (Orange) -->
+                <button type="button" class="btn btn-warning" id="addToCartButton" data-bs-toggle="modal" data-bs-target="#cartConfirmationModal" disabled onclick="populateConfirmationModal()">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Second Modal: Cart Confirmation Modal -->
+<div class="modal fade" id="cartConfirmationModal" tabindex="-1" aria-labelledby="cartConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" id="cartConfirmationModalDialog">
+        <div class="modal-content" id="cartConfirmationModalContent">
+            <!-- Modal Header -->
+            <div class="modal-header" id="cartConfirmationModalHeader">
+                <h5 class="modal-title" id="cartConfirmationModalLabel">Confirm Add to Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body" id="cartConfirmationModalBody">
+                <div class="text-center">
+                    <img id="cartProductImage" src="" alt="Product Image" class="img-fluid mb-3" style="width: 100%; max-height: 300px; object-fit: contain;">
+                </div>
+                <!-- Product Details Organized in Flex Layout -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between border p-3 rounded">
+                        <div class="col-3 border-end p-2">
+                            <strong class="label-large">Product</strong>
+                            <p id="cartProductName" class="mt-2">Product Name</p>
+                        </div>
+                        <div class="col-3 border-end p-2">
+                            <strong class="label-large">Category</strong>
+                            <p id="cartProductCategory" class="mt-2">Category Name</p>
+                        </div>
+                        <div class="col-3 border-end p-2">
+                            <strong class="label-large">Color</strong>
+                            <p id="cartProductColor" class="mt-2">Color Name</p>
+                        </div>
+                        <div class="col-3 p-2">
+                            <strong class="label-large">Quantity</strong>
+                            <p id="cartQuantity" class="mt-2">1</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer justify-content-between" id="cartConfirmationModalFooter">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="goBackToProductModal()">Back</button>
+                <button type="button" class="btn btn-success" id="cartConfirmAddToCart" onclick="confirmCartAddition()">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <script>
+            const productItems = document.querySelectorAll('.product-item');
+            const hoverOverlays = document.querySelectorAll('.hover-overlay');
+        
+            productItems.forEach((item, index) => {
+                item.addEventListener('mouseenter', () => {
+                    hoverOverlays[index].style.opacity = '1';
+                });
+                item.addEventListener('mouseleave', () => {
+                    hoverOverlays[index].style.opacity = '0';
+                });
+            });
+            function showProductAndQuantityModal(productId) {
+                // Send a request to the backend to get product details
+                fetch(`/product/${productId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch product details');
+                        }
+                        return response.json();
+                    })
+                    .then(productDetails => {
+                        if (productDetails.error) {
+                            console.error(productDetails.error);
+                            alert('Product details could not be loaded.');
+                            return;
+                        }
+            
+                        console.log('Product details:', productDetails); // Debugging: Log product details to the console
+            
+                        // Populate the modal fields with the product details
+                        document.getElementById('productModalLabel').textContent = productDetails.Product_Name || 'No Name Available';
+                        document.getElementById('productPrice').textContent = `Price: PHP ${productDetails.Product_Price || '0.00'}`;
+                        document.getElementById('productDescription').textContent = `Description: ${productDetails.Product_Description || 'No Description Available'}`;
+                        document.getElementById('productCategory').textContent = `Category: ${productDetails.Product_Category || 'N/A'}`;
+                        document.getElementById('productColor').textContent = `Color: ${productDetails.Product_Color || 'N/A'}`;
+                        document.getElementById('productStock').textContent = `Stock: ${productDetails.Product_Stock || '0'}`;
+                        document.getElementById('productSeller').textContent = `Seller ID: ${productDetails.Seller_ID || 'N/A'}`;
+                        document.getElementById('productId').textContent = `Product ID: ${productDetails.Product_ID || 'N/A'}`;
+            
+                        // Handle product image display
+                        const productImageContainer = document.getElementById('productImage');
+                        if (productDetails.Product_Main_Picture) {
+                            productImageContainer.innerHTML = `
+                                <img src="data:image/jpeg;base64,${productDetails.Product_Main_Picture}" 
+                                     alt="Product Image" 
+                                     class="img-fluid" id="productMainImage">
+                            `;
+                        } else {
+                            productImageContainer.innerHTML = '<p>No Image Available</p>';
+                        }
+            
+                        // Handle product specs display
+                        const productSpecsContainer = document.getElementById('productSpecs');
+                        if (productDetails.Product_Specs && productDetails.Product_Specs.length > 0) {
+                            productSpecsContainer.innerHTML = productDetails.Product_Specs.map(spec => {
+                                return `
+                                    <div class="product-spec">
+                                        <strong>${spec.Product_Specs_Type}</strong>: ${spec.Product_Specs_Content}
+                                    </div>
+                                `;
+                            }).join('');
+                        } else {
+                            productSpecsContainer.innerHTML = '<p>No specifications available.</p>';
+                        }
+            
+                        // Reset the quantity input field and error message
+                        const quantityInput = document.getElementById('quantityInput');
+                        quantityInput.value = 1; // Default value for quantity
+                        document.getElementById('quantityError').style.display = "none"; // Hide error initially
+            
+                        // Handle real-time validation on quantity input
+                        quantityInput.addEventListener('input', function validateQuantity() {
+                            const quantity = parseInt(quantityInput.value);
+                            const stock = parseInt(productDetails.Product_Stock);
+            
+                            // Check if the quantity is valid
+                            if (quantity > stock || quantity <= 0 || isNaN(quantity)) {
+                                document.getElementById('quantityError').style.display = "block";
+                                document.getElementById('quantityError').textContent = `Please enter a valid number less than or equal to stock (${stock}).`;
+                            } else {
+                                document.getElementById('quantityError').style.display = "none";
+                            }
+                        });
+            
+                        // Show the product modal
+                        var productModal = new bootstrap.Modal(document.getElementById('productModal'));
+                        productModal.show();
+            
+                        // Handle "Add to Cart" button click
+                        const addToCartButton = document.getElementById('addToCartButton');
+                        addToCartButton.removeEventListener('click', handleAddToCart); // Prevent duplicate listeners
+                        addToCartButton.addEventListener('click', handleAddToCart);
+            
+                        function handleAddToCart() {
+                            const quantity = quantityInput.value;
+                            if (quantity <= 0 || isNaN(quantity)) {
+                                document.getElementById('quantityError').style.display = "block";
+                            } else {
+                                // Show the confirmation modal
+                                document.getElementById('cartProductName').textContent = productDetails.Product_Name;
+                                document.getElementById('cartProductCategory').textContent = productDetails.Product_Category || 'N/A';
+                                document.getElementById('cartProductColor').textContent = productDetails.Product_Color || 'N/A';
+                                document.getElementById('cartQuantity').textContent = quantity;
+            
+                                // Transfer product image to cart modal
+                                const cartProductImage = document.getElementById('cartProductImage'); // Add an image container in your cart modal
+                                if (productDetails.Product_Main_Picture) {
+                                    cartProductImage.src = `data:image/jpeg;base64,${productDetails.Product_Main_Picture}`;
+                                    console.log("Image is being set:", cartProductImage.src);  // Debugging: Check if the image URL is correct
+                                } else {
+                                    cartProductImage.src = ''; // Placeholder if no image
+                                }
+            
+                                // Check if category and color are being set correctly
+                                console.log("Category:", productDetails.Product_Category);
+                                console.log("Color:", productDetails.Product_Color);
+            
+                                // Close the product modal before opening the confirmation modal
+                                productModal.hide(); // Hide the product modal
+            
+                                var cartModal = new bootstrap.Modal(document.getElementById('cartConfirmationModal'));
+                                cartModal.show(); // Show the confirmation modal
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product details:', error);
+                        alert('There was an error fetching product details.');
+                    });
+            }
+            
+            
+            function showProductDetails(productId) {
+                fetch(`/product/${productId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Check if there was an error returned from the backend
+                        if (data.error) {
+                            // Display error message in the modal
+                            document.getElementById('productModalLabel').textContent = "Error";
+                            document.getElementById('productPrice').textContent = `Error: ${data.error}`;
+                            document.getElementById('productDescription').textContent = "";
+                            document.getElementById('productCategory').textContent = "";
+                            document.getElementById('productImage').innerHTML = "<p>Image not available</p>";
+                            document.getElementById('productColor').textContent = "";
+                            document.getElementById('productStock').textContent = "";
+                            document.getElementById('productId').textContent = "";
+                            document.getElementById('productSeller').textContent = "";
+                            document.getElementById('productInfoId').textContent = "";
+                            document.getElementById('productColorId').textContent = "";
+                            document.getElementById('productImageId').textContent = "";
+                            document.getElementById('productSpecsId').textContent = "";
+            
+                            // Close any existing content and display validation message
+                            const specsContainer = document.getElementById('productSpecs');
+                            specsContainer.innerHTML = "<p>No product details available</p>";
+                        } else {
+                            // Proceed as normal if no error
+                            document.getElementById('productModalLabel').textContent = data.Product_Name || "Product Name Not Available";
+                            document.getElementById('productPrice').textContent = `Price: PHP ${data.Product_Price || "Not Available"}`;
+                            document.getElementById('productDescription').textContent = data.Product_Description || "Description not available.";
+                            
+                            // Product Category
+                            document.getElementById('productCategory').textContent = `${data.Product_Category || "Not Available"}`;
+                            
+                            // Product Image
+                            if (data.Product_Main_Picture) {
+                                document.getElementById('productImage').innerHTML = `<img src="data:image/jpeg;base64,${data.Product_Main_Picture}" alt="Product Image" class="img-fluid">`;
+                            } else {
+                                document.getElementById('productImage').innerHTML = "<p>Image not available</p>";
+                            }
+                            
+                            // Product Color and Stock
+                            document.getElementById('productColor').textContent = `${data.Product_Color || "Not Available"}`;
+                            document.getElementById('productStock').textContent = `${data.Product_Stock !== null ? data.Product_Stock : "Not Available"}`;
+                            
+                            // Hidden Product IDs
+                            document.getElementById('productId').textContent = `${data.Product_ID || "N/A"}`;
+                            document.getElementById('productSeller').textContent = `${data.Seller_ID || "N/A"}`;
+                            document.getElementById('productInfoId').textContent = `${data.Product_Info_ID || "N/A"}`;
+                            document.getElementById('productColorId').textContent = `${data.Product_Color_ID || "N/A"}`;
+                            document.getElementById('productImageId').textContent = `${data.Product_Image_ID || "N/A"}`;
+                    
+                            // Handle product specifications
+                            const specsContainer = document.getElementById('productSpecs');
+                            specsContainer.innerHTML = ''; // Clear previous specs
+                            if (data.Product_Specifications && data.Product_Specifications.length > 0) {
+                                data.Product_Specifications.forEach(spec => {
+                                    const specElement = document.createElement('div');
+                                    specElement.classList.add('spec-item');
+                                    specElement.innerHTML = `<strong>${spec.Product_Specs_Type}:</strong> ${spec.Product_Specs_Content}`;
+                                    specsContainer.appendChild(specElement);
+                                    
+                                    // Display the Product Specs ID (using the first spec for example)
+                                    if (spec.Product_Specs_ID) {
+                                        document.getElementById('productSpecsId').textContent = `${spec.Product_Specs_ID}`;
+                                    } else {
+                                        document.getElementById('productSpecsId').textContent = "Product Specs ID: N/A";
+                                    }
+                                });
+                            } else {
+                                specsContainer.innerHTML = "<p>No specifications available</p>";
+                                document.getElementById('productSpecsId').textContent = "Product Specs ID: N/A";
+                            }
+                        }
+                        
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('productModalLabel').textContent = "Error";
+                        document.getElementById('productPrice').textContent = `Error: Unable to fetch product details`;
+                    });
+            }
+            
+            document.addEventListener("DOMContentLoaded", function() {
+                // Existing function: Truncate product names
+                const productNames = document.querySelectorAll('.product-name');
+                
+                productNames.forEach(nameElement => {
+                    const maxWidth = nameElement.offsetWidth;
+                    const fullText = nameElement.innerText;
+            
+                    // Temporarily apply no truncation to get accurate measurement
+                    nameElement.style.whiteSpace = 'nowrap';
+                    nameElement.style.overflow = 'hidden';
+                    nameElement.style.textOverflow = 'clip'; // Ensure no ellipsis initially
+            
+                    // If the text is longer than the container, truncate it
+                    if (nameElement.scrollWidth > maxWidth) {
+                        let truncatedText = fullText;
+            
+                        // Truncate and append ellipsis
+                        while (nameElement.scrollWidth > maxWidth && truncatedText.length > 0) {
+                            truncatedText = truncatedText.slice(0, -1); // Remove last character
+                            nameElement.innerText = truncatedText + '...';
+                        }
+                    }
+                });
+            
+                // New function: Real-time validation for quantity input
+                const quantityInput = document.getElementById('quantityInput');
+                const addToCartButton = document.getElementById('addToCartButton');
+                const quantityError = document.getElementById('quantityError');
+            
+                // Event listener for when modal is shown
+                const modal = document.getElementById('productModal');
+                modal.addEventListener('shown.bs.modal', function() {
+                    const productStock = parseInt(document.getElementById('productStock').innerText.trim(), 10);
+            
+                    // Initially disable Add to Cart button
+                    addToCartButton.disabled = true;
+            
+                    // Validate quantity input
+                    quantityInput.addEventListener('input', function() {
+                        const quantityValue = quantityInput.value.trim();
+            
+                        // If the quantity input is empty, disable Add to Cart button
+                        if (quantityValue === '') {
+                            showError('Quantity cannot be blank.');
+                            addToCartButton.disabled = true;
+                            return;
+                        }
+            
+                        // If the input is not a valid number, show error
+                        if (!/^\d+$/.test(quantityValue)) {
+                            showError('Please enter a valid number.');
+                            addToCartButton.disabled = true;
+                            return;
+                        }
+            
+                        const quantity = parseInt(quantityValue, 10);
+            
+                        // Check if the quantity is valid
+                        if (quantity < 1) {
+                            showError('Quantity must be at least 1.');
+                            addToCartButton.disabled = true;
+                        } else if (quantity > productStock) {
+                            showError(`Only ${productStock} units are in stock.`);
+                            addToCartButton.disabled = true;
+                        } else {
+                            hideError();
+                            addToCartButton.disabled = false; // Enable Add to Cart
+                        }
+                    });
+            
+                    function showError(message) {
+                        quantityError.style.display = 'block';
+                        quantityError.textContent = message;
+                    }
+            
+                    function hideError() {
+                        quantityError.style.display = 'none';
+                    }
+            
+                    // Prevent proceeding if quantityInput is blank or invalid when Add to Cart is clicked
+                    addToCartButton.addEventListener('click', function(event) {
+                        const quantityValue = quantityInput.value.trim();
+            
+                        if (quantityValue === '' || !/^\d+$/.test(quantityValue)) {
+                            event.preventDefault();
+                            showError('Quantity cannot be blank or invalid.');
+                        }
+                    });
+                });
+            });
+            
+            
+            function updatePriceDisplay() {
+                const minPrice = parseFloat(document.getElementById('minPrice').value);
+                const maxPrice = parseFloat(document.getElementById('maxPrice').value);
+        
+                if (minPrice > maxPrice) {
+                    document.getElementById('maxPrice').value = minPrice;
+                }
+            }
+        
+            // Add event listeners to the price range dropdowns
+            document.getElementById('minPrice').addEventListener('change', updatePriceDisplay);
+            document.getElementById('maxPrice').addEventListener('change', updatePriceDisplay);
+
+
+            function resetFilters() {
+                // Reset both dropdowns to their default value (₱ 0)
+                document.getElementById("minPrice").value = "0";
+                document.getElementById("maxPrice").value = "0";
+                document.getElementById("sort").value = "recent";
+    
+                // Reset checkboxes (optional, if you want to clear them as well)
+                document.getElementById("topSelling").checked = false;
+                document.getElementById("popular").checked = false;
+                document.getElementById("topViews").checked = false;
+                document.getElementById("youMayLike").checked = false;
+            }
+            function goBackToProductModal() {
+                // Programmatically hide the current modal and show the product modal
+                const cartConfirmationModal = new bootstrap.Modal(document.getElementById('cartConfirmationModal'));
+                cartConfirmationModal.hide();  // Hide the confirmation modal
+                
+                const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+                productModal.show();  // Show the product modal again
+            }
+            
+            function populateConfirmationModal() {
+            // Fetch product name from the product modal
+            const productName = document.getElementById('productModalLabel').innerText;
+
+            // Fetch quantity input value
+            const quantityInput = document.getElementById('quantityInput').value;
+
+            // Fetch product image (if available) from the product modal
+            const productImage = document.getElementById('productImage').querySelector('img');
+            const productImageSrc = productImage ? productImage.src : ''; // If image exists, get its src
+
+            // Fetch color and category
+            const productColor = document.getElementById('productColor').innerText;
+            const productCategory = document.getElementById('productCategory').innerText;
+
+            // Set values in the confirmation modal
+            document.getElementById('cartProductName').innerText = productName;
+            document.getElementById('cartQuantity').innerText = quantityInput || '1'; // Default to 1 if empty
+
+            // Set the color and category in the confirmation modal
+            document.getElementById('cartProductColor').innerText = productColor || 'Not Available';
+            document.getElementById('cartProductCategory').innerText = productCategory || 'Not Available';
+
+            // Set the image in the confirmation modal if it exists
+            const cartProductImage = document.getElementById('cartProductImage'); // Assuming there's an img element in the confirmation modal for product image
+            if (cartProductImage && productImageSrc) {
+                cartProductImage.src = productImageSrc;
+            } else {
+                cartProductImage.src = ''; // Placeholder if no image
+            }
+
+
+            
+}
+
+// Open the product modal with necessary data
+function openProductModal(product) {
+    // Assuming 'product' is an object containing all the necessary data
+
+    // Set the product details in the modal
+    document.getElementById('productModalLabel').innerText = product.name;
+    document.getElementById('productImage').innerHTML = `<img src="${product.image}" alt="${product.name}" class="img-fluid">`;
+    document.getElementById('productPrice').innerText = `PHP ${parseFloat(product.price).toFixed(2)}`;  // Ensure price is a real number
+    document.getElementById('productDescription').innerText = product.description;
+    document.getElementById('productSpecs').innerHTML = product.specifications || '<p>No specifications available</p>';
+    
+    // Set hidden product IDs
+    document.getElementById('productId').innerText = `Product ID: ${product.id}`;
+    document.getElementById('productSeller').innerText = `Seller ID: ${product.sellerId}`;
+    document.getElementById('productInfoId').innerText = `Product Info ID: ${product.infoId}`;
+    document.getElementById('productColorId').innerText = `Product Color ID: ${product.colorId}`;
+    document.getElementById('productImageId').innerText = `Product Image ID: ${product.imageId}`;
+    document.getElementById('productSpecsId').innerText = `Product Specs ID: ${product.specsId}`;
+    
+    // Set the buyer ID (if needed)
+    document.getElementById('buyerId').innerText = `Buyer ID: ${product.buyerId || 'N/A'}`;
+    
+    // Set category, color, and stock
+    document.getElementById('productCategory').innerText = product.category || 'N/A';
+    document.getElementById('productColor').innerText = product.color || 'N/A';
+    document.getElementById('productStock').innerText = product.stock || 'N/A';
+}
+
+// Populate the confirmation modal with the product data
+function openProductModal(product) {
+    // Assuming 'product' is an object containing all the necessary data
+
+    // Set the product details in the modal
+    document.getElementById('productModalLabel').innerText = product.name;
+    document.getElementById('productImage').innerHTML = `<img src="${product.image}" alt="${product.name}" class="img-fluid">`;
+    document.getElementById('productPrice').innerText = `PHP ${product.price.toFixed(2)}`;
+    document.getElementById('productDescription').innerText = product.description;
+    document.getElementById('productSpecs').innerHTML = product.specifications || '<p>No specifications available</p>';
+    
+    // Set hidden product IDs
+    document.getElementById('productId').innerText = `Product ID: ${product.id}`;
+    document.getElementById('productSeller').innerText = `Seller ID: ${product.sellerId}`;
+    document.getElementById('productInfoId').innerText = `Product Info ID: ${product.infoId}`;
+    document.getElementById('productColorId').innerText = `Product Color ID: ${product.colorId}`;
+    document.getElementById('productImageId').innerText = `Product Image ID: ${product.imageId}`;
+    document.getElementById('productSpecsId').innerText = `Product Specs ID: ${product.specsId}`;
+    
+    // Set the buyer ID (if needed)
+    document.getElementById('buyerId').innerText = `Buyer ID: ${product.buyerId || 'N/A'}`;
+    
+    // Set category, color, and stock
+    document.getElementById('productCategory').innerText = product.category || 'N/A';
+    document.getElementById('productColor').innerText = product.color || 'N/A';
+    document.getElementById('productStock').innerText = product.stock || 'N/A';
+}
+// Function to open the second modal with the product details and allow user to confirm the cart addition
+function openConfirmationModal(product) {
+    // Set the product details in the confirmation modal
+    document.getElementById('cartProductName').innerText = product.name;
+    document.getElementById('cartProductCategory').innerText = product.category || 'N/A';
+    document.getElementById('cartProductColor').innerText = product.color || 'N/A';
+    document.getElementById('cartQuantity').innerText = document.getElementById('quantityInput').value || '1'; // Default to 1 if no quantity input
+
+    // Set the image in the confirmation modal
+    const productImage = document.getElementById('cartProductImage');
+    if (product.image) {
+        productImage.src = product.image;
+    } else {
+        productImage.src = ''; // Default placeholder if no image
+    }
+
+    // Show the second modal
+    const confirmationModal = new bootstrap.Modal(document.getElementById('cartConfirmationModal'));
+    confirmationModal.show();
+}
+
+function confirmCartAddition() {
+    // Get the data from the modal or product details
+    const data = {
+        product_id: parseInt(document.getElementById('productId').innerText.replace('Product ID: ', '').trim(), 10),
+        product_info_id: parseInt(document.getElementById('productInfoId').innerText.replace('Product Info ID: ', '').trim(), 10),
+        product_color_id: parseInt(document.getElementById('productColorId').innerText.replace('Product Color ID: ', '').trim(), 10),
+        product_image_id: parseInt(document.getElementById('productImageId').innerText.replace('Product Image ID: ', '').trim(), 10),
+        product_specs_id: parseInt(document.getElementById('productSpecsId').innerText.replace('Product Specs ID: ', '').trim(), 10),
+        seller_id: parseInt(document.getElementById('productSeller').innerText.replace('Seller ID: ', '').trim(), 10),
+        buyer_id: parseInt(document.getElementById('buyerId').innerText.replace('Buyer ID: ', '').trim(), 10),
+        quantity: parseInt(document.getElementById('quantityInput').value.trim(), 10) || 1  // Ensure it's a number
+    };
+
+    console.log('Sending data to server:', data); // Log the data for debugging
+
+    // Send the data to the backend via a POST request
+    fetch('/add-to-cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())  // Parse the JSON response
+    .then(data => {
+        if (data.status === 'success') {
+            // Check if the product is new or if the quantity was updated
+            if (data.message === "Product added in cart successfully!") {
+                alert('Product added in cart successfully!');
+            } else if (data.message === "Your cart has been updated with new quantity!") {
+                alert('Your cart has been updated with new quantity!');
+            }
+            location.reload();  // Optionally, reload the page to update the cart view
+        } else {
+            alert(data.message);  // Display the error message from the server
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+    });
+
+    // Close the second modal after confirming the addition
+    const confirmationModal = new bootstrap.Modal(document.getElementById('cartConfirmationModal'));
+    confirmationModal.hide();
+    
+}
+
+
+// Function to handle the "Back" button in the second modal, going back to the product modal
+function goBackToProductModal() {
+    const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+    productModal.show();
+}
+
+        </script>
+    </div>
+</div>
+<!-- Additional CSS for Modern Design -->
+<style>
+    /* Modal Specific Customization */
+    #customModalDialog {
+        border-radius: 10px; /* Round the edges of the modal */
+    }
+
+    #customModalContent {
+        background-color: #f8f9fa;
+        border-radius: 10px; /* Ensure the content has rounded edges */
+    }
+    #customModalHeader {
+        background-color: #007bff; /* Blue background for header */
+        color: white; /* White text for header */
+    }
+    #customModalBody {
+        padding: 2rem; /* Add more padding inside the body */
+        font-size: 1rem; /* Standard font size */
+    }
+    
+    #customModalFooter {
+        background-color: #007bff;
+        color: white;
+        border-top: 1px solid #ddd;
+    }
+    #buyNowButton {
+        background-color: #28a745; /* Green color for Buy Now */
+        border-color: #28a745;
+        color: white;
+        display: inline-block; /* Ensure buttons are side by side */
+        margin-right: 10px; /* Space between buttons */
+    }
+    
+    #buyNowButton:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    
+    #addToCartButton {
+        background-color: #ffc107; /* Orange color for Add to Cart */
+        border-color: #ffc107;
+        color: white;
+        display: inline-block; /* Ensure buttons are side by side */
+    }
+    
+    #addToCartButton:hover {
+        background-color: #e0a800;
+        border-color: #c69500;
+    }
+    /* Product Details */
+    .label-large {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #495057;
+        text-align: center;
+    }
+    .fs-5 {
+        font-size: 1.25rem;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+    .text-end {
+        text-align: right;
+    }
+
+    /* Additional Adjustments */
+    .accordion-button {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .accordion-body {
+        padding: 1rem;
+        background-color: #f8f9fa;
+    }
+
+    /* Modal Specific Customization for Cart Confirmation */
+#cartConfirmationModalDialog {
+    border-radius: 10px; /* Round the edges of the modal */
+}
+
+#cartConfirmationModalContent {
+    background-color: #f8f9fa;
+    border-radius: 10px; /* Ensure the content has rounded edges */
+}
+
+#cartConfirmationModalHeader {
+    background-color: #007bff; /* Blue background for header */
+    color: white; /* White text for header */
+}
+
+#cartConfirmationModalBody {
+    padding: 2rem; /* Add more padding inside the body */
+    font-size: 1rem; /* Standard font size */
+}
+
+#cartConfirmationModalFooter {
+    background-color: #f8f9fa; /* Light background for footer */
+    color: #495057;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+/* Button Customization in Footer */
+#cartBackButton {
+    background-color: #6c757d; /* Grey color for Back */
+    border-color: #6c757d;
+    color: white;
+    width: 48%; /* Make buttons the same size */
+}
+
+#cartBackButton:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+#cartConfirmAddToCart {
+    background-color: #28a745; /* Green color for Confirm */
+    border-color: #28a745;
+    color: white;
+    width: 48%; /* Make buttons the same size */
+}
+
+#cartConfirmAddToCart:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Centering the Image */
+#cartProductImage {
+    max-width: 100%;
+    max-height: 200px; /* Adjusted for a more balanced display */
+    object-fit:cover; /* Keeps aspect ratio intact */
+}
+
+/* Product Details Styling */
+#cartProductName,
+#cartProductCategory,
+#cartProductColor,
+#cartQuantity {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #495057;
+}
+
+#cartProductName strong,
+#cartProductCategory strong,
+#cartProductColor strong,
+#cartQuantity strong {
+    font-weight: bold;
+}
+/* Product Image Adjustment */
+#productImage img {
+    width: 100%; /* Ensures the image takes up 100% of the container width */
+    height: auto; /* Maintains the aspect ratio of the image */
+    max-width: 100%; /* Prevents the image from exceeding the container width */
+    max-height: 400px; /* Set a max height for the image to control its size */
+    object-fit: cover; /* Ensures the image covers the area without stretching */
+}
+</style>
+<!-- Pagination -->
+<div class="d-flex justify-content-center mt-5">
+    <ul class="pagination">
+        {% if current_page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ current_page - 1 }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% endif %}
+        
+        {% for i in range(1, total_pages + 1) %}
+        <li class="page-item {% if i == current_page %} active {% endif %}">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+        </li>
+        {% endfor %}
+        
+        {% if current_page < total_pages %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ current_page + 1 }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+
+{% endblock %}

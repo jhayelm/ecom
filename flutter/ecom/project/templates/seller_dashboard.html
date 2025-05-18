@@ -1,0 +1,151 @@
+{% extends "base_seller.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='seller_dashboard.css') }}">
+
+
+<nav class="navbar navbar-expand">
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>
+
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="data:image/jpeg;base64,{{ shop_profile.Shop_Profile|b64encode }}"
+                        alt="Shop Image"
+                        class="img-fluid border rounded-circle border-secondary border-2"
+                        style="width: 40px; height: 40px">
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="d-flex flex-column gap-0">
+                    <div class="">
+                        {{ shop_profile.Shop_Name }}
+                    </div>
+                    <div class="text-secondary d-none" style="font-size: 0.7rem">
+                        {{ session['user_name'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="content px-5">
+    <!-- Header Section -->
+    <div class="container-fluid d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3>Dashboard</h3>
+            <p class="mt-1"><small class="text-muted">Here's what's happening in your store.</small></p>
+        </div>
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/filter.png') }}" alt="Filter Icon" class="me-1" style="width: 1rem;">
+                Filter
+            </button>
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/sort.png') }}" alt="Sort Icon" class="me-1" style="width: 1rem;">
+                Sort
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card kpi-card">
+                <h4>Total Revenue</h4>
+                <p>PHP 56,000</p>
+                <small class="positive">+14.5%</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card">
+                <h4>Average Order Value</h4>
+                <p>PHP 48,000</p>
+                <small class="positive">+11.4%</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card">
+                <h4>Repeat Purchase Rate</h4>
+                <p>34%</p>
+                <small class="negative">-7.8%</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card">
+                <h4>Orders</h4>
+                <p>172</p>
+                <small class="positive">+5.6%</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Summary Section -->
+    <div class="card sales-summary mt-4">
+        <h3>Sales Summary</h3>
+        <div class="dropdown">
+            <button class="btn btn-outline dropdown-toggle" type="button" id="dateRange" data-bs-toggle="dropdown" aria-expanded="false">
+                Last 7 days
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dateRange">
+                <li><a class="dropdown-item" href="#">Last 7 days</a></li>
+                <li><a class="dropdown-item" href="#">Last 30 days</a></li>
+            </ul>
+        </div>
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card info-box">
+                <h4>New Customers</h4>
+                <p>89</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card info-box">
+                <h4>Pending Orders</h4>
+                <p>273</p>
+            </div>
+        </div>
+    </div>
+
+    
+</main>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8'],
+            datasets: [{
+                label: 'Sales',
+                data: [5000, 8000, 15000, 20000, 25000, 18000, 22000],
+                fill: true,
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                tension: 0.4
+            }]
+        }
+    });
+</script>
+
+{% endblock %}
+s

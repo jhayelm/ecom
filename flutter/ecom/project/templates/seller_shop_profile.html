@@ -1,0 +1,217 @@
+{% extends "base_seller.html" %}
+
+{% block title %}Shop Profile{% endblock %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="data:image/jpeg;base64,{{ shop_profile.Shop_Profile|b64encode }}" 
+                        alt="Shop Image" 
+                        class="img-fluid border rounded-circle border-secondary border-2"
+                        style="width: 40px; height: 40px">                
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="d-flex flex-column gap-0">
+                    <div class="" >
+                        {{ shop_profile.Shop_Name }}
+                    </div>
+                    <div class="text-secondary d-none" style="font-size: 0.7rem">
+                        {{ session['user_name'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        <div>
+            <h3>Shop Profile</h3>
+            <p class="mt-1"><small class="text-muted">Here's what's happening in your store.</small></p>
+        </div>
+        
+        <div class="btn-container d-flex flex-wrap gap-2">
+            {% if shop %}
+                <!-- Show Update button only if the shop is set up -->
+                <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#updateShopModal">
+                    <img src="{{ url_for('static', filename='img/icons/update.png') }}" alt="Add Product Icon" class="me-1" style="width: 1rem;">
+                    Update Details
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    
+    <!-- Display shop info -->
+    <div class="d-flex align-items-start mt-4 px-3 shop-container">
+        <!-- Shop Image -->
+        <div class="shop-image-container">
+            <img src="data:image/jpeg;base64,{{ shop.Shop_Profile|b64encode }}" 
+                 alt="Shop Image" 
+                 class="img-fluid border border-secondary border-3">
+        </div>
+        
+        <!-- Shop Info -->
+        <div class="shop-info">
+            <div class="d-flex flex-row gap-4 align-items-center text-align-center">
+                <img src="{{ url_for('static', filename='img/icons/shop_picture_icon.png') }}">
+                <h1 class="fw-bold mt-3">{{ shop.Shop_Name }}</h1>
+            </div>
+            <p class="text-muted" style="white-space: pre-wrap; word-wrap: break-word; max-width: 600px; text-align: justify;">
+                {{ shop.Shop_Description }}
+            </p>   
+            <div class="service-info">
+                <div class="ratings-info">
+                    <p>
+                        <strong>Average Ratings:</strong>
+                    </p>
+                    <span class="text-primary fw-bold" >
+                        {{ shop.Average_Rating }} 
+                    </span>
+                    <span class="fw-bold" >
+                        /5 
+                    </span>
+                    <span class="text-muted">
+                        - {{ shop.Participants }} participants
+                    </span>   
+                </div>
+                <div class="feedback-info">
+                    <p>
+                        <strong>Feebacks</strong>
+                    </p>
+                    <span class="text-primary fw-bold" >
+                        {{ shop.Total_Feedbacks }}
+                    </span>
+                    <span class="text-muted">
+                        total feedbacks
+                    </span>   
+                </div> 
+            </div>
+            
+            
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<!-- Update Shop Modal -->
+<div class="modal fade" id="updateShopModal" tabindex="-1" aria-labelledby="updateShopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg add-product-container">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateShopModalLabel">Update Shop Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('seller_shop_profile.update_shop_profile') }}" method="POST" enctype="multipart/form-data">
+                    <!-- Hidden input for Shop ID -->
+                    <input type="hidden" name="shop_id" value="{{ shop.Shop_ID }}">
+
+                    <!-- Shop Name -->
+                    <div class="mb-3">
+                        <label for="updateShopName" class="form-label">Shop Name</label>
+                        <input type="text" class="form-control" id="updateShopName" name="shopName" 
+                               value="{{ shop.Shop_Name }}" required>
+                    </div>
+
+                    <!-- Shop Description -->
+                    <div class="mb-3">
+                        <label for="updateShopDescription" class="form-label">Shop Description</label>
+                        <textarea class="form-control" id="updateShopDescription" name="shopDescription" rows="3" required>
+                            {{ shop.Shop_Description }}
+                        </textarea>
+                    </div>
+
+                    <!-- Current Shop Profile -->
+                    <div class="mb-3">
+                        <label class="form-label">Current Shop Profile Picture</label>
+                        <div class="mb-2 d-flex align-items-center justify-content-center">
+                            <img src="data:image/jpeg;base64,{{ shop.Shop_Profile|b64encode }}" 
+                                 alt="Shop Image" class="img-fluid border border-secondary border-3" style="width: 200px; height: 200px; border-radius: 100rem;">
+                        </div>
+                    </div>
+
+                    <!-- New Profile Picture -->
+                    <div class="mb-3">
+                        <label for="updateShopProfilePicture" class="form-label">Update Profile Picture</label>
+                        <input type="file" class="form-control" id="updateShopProfilePicture" name="shopProfilePicture" accept="image/*">
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100 mt-3" data-bs-toggle="modal" data-bs-target="#updateConfirmationModal">Update Shop Details</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal for Update -->
+<div class="modal fade" id="updateConfirmationModal" tabindex="-1" aria-labelledby="updateConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateConfirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-indent: 2rem;">
+                Are you sure you want to update the shop details? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmUpdateBtn">Yes, Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='seller_shop_profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='seller_inventory.css') }}">
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

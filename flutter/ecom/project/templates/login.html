@@ -1,0 +1,111 @@
+{% extends "base_login.html" %}
+
+{% block title %}Fenamaz - Login{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container login-container">
+
+        <div class="d-flex justify-content-between mb-4">
+            <h2 class="fs-3" style="font-weight: 600;">Login</h2>
+            <a href="/" class="exit-icon text-dark">
+                <i class="bi bi-x fs-3"></i>
+            </a>
+        </div>
+
+        <!-- Message Box -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} 
+
+        <form action="{{ url_for('login.login') }}" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" required>
+            </div>
+
+            <div class="password-field mb-2">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
+                <button type="button" class="password-field__toggle" id="togglePassword">
+                  <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
+                </button>
+              </div>
+
+            <div class="mb-3 text-end forgot-pass">
+                <a href="{{ url_for('login.forgot_pass') }}" class="text-primary">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+        </form>
+
+        <div class="mt-4 text-center d-flex justify-content-between">
+            <p>Don't have an Account?</p>
+            <a href="{{ url_for('login.user_choose') }}" class="text-primary">Register Now!</a>
+        </div>
+    </div>
+</div>
+
+<!-- Info Modal Structure -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Login Successful!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="infoModalMessage">You have logged in successfully!</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="redirectBtn">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if login_success %}
+    <script>
+        // Show the modal
+        var myModal = new bootstrap.Modal(document.getElementById('infoModal'));
+        myModal.show();
+
+        // Redirect user after closing the modal
+        document.getElementById('infoModal').addEventListener('hidden.bs.modal', function () {
+            var redirectUrl = "{{ redirect_url }}";
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            }
+        });
+
+    </script>
+{% endif %}
+
+<script>
+
+// Toggle password visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+    const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+    togglePassword.addEventListener('click', function () {
+        // Toggle the type of the password field between password and text
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+
+        // Toggle the icon between eye and eye-slash
+        togglePasswordIcon.classList.toggle('bi-eye');
+        togglePasswordIcon.classList.toggle('bi-eye-slash');
+    });
+
+</script>
+
+
+{% endblock %}

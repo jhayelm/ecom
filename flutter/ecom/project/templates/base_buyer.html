@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fenamaz Homepage{% endblock %}</title>
+
+    <!-- BOOTSTRAP LINKS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- OUTFIT FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='buyer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='buyer_categories.css') }}">
+    
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dynamic_modal.js') }}"></script>
+</head>
+<body>
+
+    
+
+    <!-- NAV BAR -->  
+    <div class="top-container">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand" href="/">
+                    <img src="{{ url_for('static', filename='img/logo/logo_buyer.svg') }}" alt="Fenamaz Logo">
+                </a>
+
+                <!-- Search Bar -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <form class="d-flex mx-auto my-2 my-lg-0" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search product..." aria-label="Search">
+                        <button class="btn btn-primary d-flex align-items-center justify-content-center search-btn" type="submit" style="width: 3rem; height: auto;">
+                            <img src="{{ url_for('static', filename='img/icons/search.png') }}" alt="Search Icon" style="width: 100%; height: 100%; object-fit: contain;">
+                        </button>
+                    </form>
+
+                    <!-- Icons -->
+                    <div class="icons-container d-flex align-items-center gap-2">
+                        <div class="icons-container d-flex align-items-center gap-3 mt-1">
+                            <a href="#" class="">
+                                <span class="material-symbols-outlined">favorite</span>
+                            </a>
+
+                            <a class="" id="cartButton" data-bs-toggle="modal" data-bs-target="#cartModal" >
+                                <span class="material-symbols-outlined">shopping_cart</span>
+                            </a>  
+                            <!-- Added Orders Icon -->
+                            <a href="{{ url_for('buyer_order_tracking.buyer_order_tracking') }}" class="">
+                                <span class="material-symbols-outlined">local_shipping</span>
+                            </a>
+                            <a href="#" class="">
+                                <span class="material-symbols-outlined">mail</span>
+                            </a>
+                            <a href="{{ url_for('buyer_notifications.buyer_notifications') }}" 
+                                class="position-relative notification-icon"
+                                data-fetch-url="{{ url_for('buyer_notifications.get_unread_notifications_count') }}">
+                                <span class="material-symbols-outlined" style="font-size: 24px; position: relative;">notifications</span>
+                                {% if g.buyer_unread_notifications_count > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge bg-danger text-white"
+                                        style="font-size: 0.6rem; width: 1.3rem; height: 1rem; "
+                                        id="notification-badge">
+                                        {{ g.buyer_unread_notifications_count }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                            
+                            <a href="#" class="">
+                                <span class="material-symbols-outlined">settings</span>
+                            </a>
+                        </div>
+                        
+                        {% block profile %} 
+                            <!-- Profile Dropdown -->
+                            <div class="btn-group">
+                                {% if profile_pic %}
+                                    <button type="button" class="btn btn-link profile" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="data:image/jpeg;base64,{{ profile_pic }}" alt="Profile Picture" class="img-fluid rounded-circle border border-secondary border-1" style="object-fit: cover;">
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-link profile" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="{{ url_for('static', filename='img/buyer_navs/profile.svg') }}" alt="Profile" style="cursor: pointer;">
+                                    </button>
+                                {% endif %}
+                                
+                                {% if session.get('user_id') %}
+
+                                    <ul class="dropdown-menu dropdown-menu-end" style="width: auto; padding: 1rem;">
+                                        <li class="mb-4" style="width: auto;">
+                                            <div class="d-flex flex-row align-items-center w-100 gap-3 ">
+                                                {% if profile_pic %}
+                                                    <img src="data:image/jpeg;base64,{{ profile_pic }}" alt="Profile Picture" class="rounded-circle border border-secondary border-2" style="cursor: pointer; width: 130px; height: 130px; border-radius: 50%; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="{{ url_for('static', filename='img/buyer_navs/profile.svg') }}" alt="Profile" style="cursor: pointer; width: 130px; height: 130px; border-radius: 50%;">
+                                                {% endif %}
+
+                                                <div class="d-flex flex-column">
+                                                    <span class="d-flex align-items-center w-100 " style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem;">
+                                                        {{ session['user_name'] }}
+                                                    </span>
+                                                    <span class="text-secondary" style="font-size: 0.85rem;">
+                                                        ID: {{ session['user_id'] }}
+                                                    </span>
+
+                                                    <div class="mt-2 d-flex flex-row justify-content-between gap-2">
+                                                        <a href="{{ url_for('buyer_profile.show_buyer_profile') }}" class="btn btn-primary w-100 btn-sm">
+                                                            See Profile
+                                                        </a>
+                                                    </div>
+                                                </div>                               
+                                            </div>
+                                        </li>
+                                        <li class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a href="#" class="btn btn-outline-dark w-100 mt-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" onclick="showDecisionModal('Confirmation', 'Do you want to logout?', function() { window.location.href = '/logout'; })">
+                                                Log Out
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                {% else %}
+
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <h6 class="dropdown-header">USER</h6> 
+                                        </li>
+                                        <li>
+                                            <span class="dropdown-item">
+                                                <img src="{{ url_for('static', filename='img/icons/buyer_name.png') }}" alt="Profile Icon" style="width: 1rem; margin-right: 0.5rem;">
+                                                Guest
+                                            </span>                                  
+                                        </li>
+                                        <li>
+                                            <h6 class="dropdown-header">ACCOUNT</h6> 
+                                        </li>
+                                        <li>
+                                            <a href="/login">
+                                                <span class="dropdown-item">
+                                                    <img src="{{ url_for('static', filename='img/icons/buyer_name.png') }}" alt="Log In Icon" style="width: 1rem; margin-right: 0.5rem;">
+                                                    Login
+                                                </span>
+                                            </a>                                   
+                                        </li>
+                                    </ul>
+
+                                {% endif %}
+                            </div>    
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        
+
+        <!-- Categories Menu -->
+        <div class="categories-menu d-none d-lg-block">
+            <div class="container-fluid">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_mobilephone">Mobile Phone</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_laptop">Laptop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_desktop">Desktop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_audio_equipment">Audio Equipment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_video_equipment">Video Equipment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_smart_devices">Smart Home Devices</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_photography">Photography</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_wearable_tech">Wearable Technology</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_digital_accs">Digital Accessories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/buyer_cat_others">Others</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END NAV BAR --> 
+
+    <!-- BLOCK CONTAINER -->
+    <div class="block-container" >       
+
+        {% block content %}{% endblock %}
+
+    </div>
+
+    <!-- INFORMATION MODAL -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="infoModalMessage">
+                    <!-- MESSAGE -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DECISION MODAL -->
+    <div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="decisionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="decisionModalLabel">Confirm Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="decisionModalMessage">
+                    <!-- MESSAGE -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="decisionModalYesButton">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- END - BLOCK CONTAINER -->
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <!-- Logo Section -->
+                <div class="col-md-3 mb-4">
+                    <a href="#" class="navbar-brand">
+                        <img src="{{ url_for('static', filename='img/logo/logo_white.png') }}" alt="Fenamaz Logo">
+                    </a>
+                </div>
+                
+                <!-- About Section -->
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold">ABOUT</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Profile</a></li>
+                        <li><a href="#" class="text-white">Careers</a></li>
+                        <li><a href="#" class="text-white">Blogs</a></li>
+                        <li><a href="#" class="text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-white">Terms & Condition</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Manual Section -->
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold">MANUAL</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Registeration</a></li>
+                        <li><a href="#" class="text-white">Buyers</a></li>
+                        <li><a href="#" class="text-white">Sellers</a></li>
+                        <li><a href="#" class="text-white">Courier</a></li>
+                        <li><a href="#" class="text-white">Admin</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Section -->
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold">CONTACT</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white d-flex align-items-center">Facebook</a></li>
+                        <li><a href="#" class="text-white d-flex align-items-center">Twitter</a></li>
+                        <li><a href="#" class="text-white d-flex align-items-center">Instagram</a></li>
+                        <li><a href="#" class="text-white d-flex align-items-center">TikTok</a></li>
+                        <li><a href="#" class="text-white d-flex align-items-center">LinkedIn</a></li>
+                    </ul>
+                </div>
+
+                <!-- FAQ's Section -->
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold">FAQ's</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">How to register an account?</a></li>
+                        <li><a href="#" class="text-white">How to sell a product?</a></li>
+                        <li><a href="#" class="text-white">How to order a product?</a></li>
+                        <li><a href="#" class="text-white">How can I recover my account?</a></li>
+                        <li><a href="#" class="text-white"><strong>See More</strong></a></li>
+                    </ul>
+                </div>
+                          
+            </div>
+
+            <hr class="bg-white">
+        
+            <!-- Footer Bottom -->
+            <div class="row text-center pt-3">
+                <div class="col">
+                    <p>&copy; 2024 Fenamaz. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-center w-100" id="cartModalLabel">Your Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                                <label for="selectAll" class="form-check-label">Select All Products</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <label for="sortSelect" class="me-2">Sort By:</label>
+                            <select id="sortSelect" class="form-control d-inline-block" style="width: auto;">
+                                <option value="date">Date</option>
+                                <option value="price">Price</option>
+                                <option value="name">Name</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="cartModalBody" class="cart-items-container">
+                        <!-- Items will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between bg-light">
+                    <h5>Total: ₱<span id="subtotal">0.00</span></h5>
+                  <!-- Checkout Button in View to Cart Modal -->
+                <button type="button" class="btn btn-success" onclick="openCheckoutModal()">Checkout</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  <!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="checkoutModalLabel">Checkout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="checkoutItemsContainer">
+            <!-- Selected items will be dynamically populated here -->
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between bg-light">
+          <h5>Total: ₱<span id="checkoutTotal">0.00</span></h5>
+          <button type="button" class="btn btn-primary" onclick="handleConfirmOrder()">Confirm Order</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+
+    <script>
+        document.getElementById('cartButton').addEventListener('click', function () {
+            fetch('/view_cart')
+                .then(response => response.json())
+                .then(data => {
+                    const cartModalBody = document.getElementById('cartModalBody');
+                    const selectAllCheckbox = document.getElementById('selectAll');
+                    const subtotalDisplay = document.getElementById('subtotal'); // Total display element
+                    cartModalBody.innerHTML = '';
+                    let totalAmount = 0;
+        
+                    // Reset total to 0.00 and uncheck "Select All" by default
+                    selectAllCheckbox.checked = false;
+                    subtotalDisplay.textContent = totalAmount.toFixed(2);
+        
+                    // Iterate through the data (cart items)
+                    data.forEach(item => {
+                        const productSubtotal = parseFloat(item.Product_Price) * item.Quantity;
+        
+                        // Format the Added_At date to only show the date part (YYYY-MM-DD)
+                        const addedDate = new Date(item.Added_At);
+                        const formattedDate = addedDate.toLocaleDateString(); // Only show date, not time
+        
+                        cartModalBody.innerHTML += ` 
+                            <div class="cart-item row mb-4 p-3 border rounded" id="cart-item-${item.cart_item_id}">
+                                <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input cart-item-checkbox" data-id="${item.cart_item_id}">
+                                        <label>Date Added: ${formattedDate}</label>
+                                    </div>
+                                    <p><strong>${item.Product_Name}</strong></p>
+                                    <div class="image-container text-center mb-2">
+                                        <img class="img-fluid rounded" src="data:image/png;base64,${item.Product_Main_Picture}" alt="${item.Product_Name}">
+                                    </div>
+                                    <p>Price: PHP ${parseFloat(item.Product_Price).toFixed(2)}</p>
+                                    <p>Available Stock: ${item.Stock_Quantity || 'Out of Stock'}</p>
+                                </div>
+        
+                                <div class="col-md-6 d-flex flex-column align-items-center">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <button class="btn btn-sm btn-outline-secondary decrease" data-id="${item.cart_item_id}">-</button>
+                                        <input type="text" class="form-control mx-2 text-center" value="${item.Quantity}" readonly style="width: 50px;" id="quantity-${item.cart_item_id}">
+                                        <button class="btn btn-sm btn-outline-secondary increase" data-id="${item.cart_item_id}">+</button>
+                                    </div>
+        
+                                    <p>Subtotal: PHP <span class="subtotal" id="subtotal-${item.cart_item_id}">${productSubtotal.toFixed(2)}</span></p>
+        
+                                    <div class="button-group d-flex flex-wrap gap-2">
+                                        <button class="btn btn-danger btn-sm remove-btn" data-id="${item.cart_item_id}">Remove</button>
+                   
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+        
+                    // Add event listener for the cart modal body (delegation)
+                    cartModalBody.addEventListener('click', function (event) {
+                        const target = event.target;
+        
+                        // Handle increase button
+                        if (target.classList.contains('increase')) {
+                            const itemId = target.getAttribute('data-id');
+                            handleQuantityChange(itemId, 'increase');
+                        }
+        
+                        // Handle decrease button
+                        if (target.classList.contains('decrease')) {
+                            const itemId = target.getAttribute('data-id');
+                            handleQuantityChange(itemId, 'decrease');
+                        }
+        
+                        // Handle remove button
+                        if (target.classList.contains('remove-btn')) {
+                            const itemId = target.getAttribute('data-id');
+                            removeItem(itemId);
+                        }
+                    })
+                    
+                    ;
+        
+                    // Select All checkbox functionality
+                    selectAllCheckbox.addEventListener('change', function () {
+                        const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+                        if (selectAllCheckbox.checked) {
+                            totalAmount = 0;
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = true;
+                                const itemSubtotal = parseFloat(
+                                    document.querySelector(`#subtotal-${checkbox.getAttribute('data-id')}`).textContent
+                                );
+                                totalAmount += itemSubtotal;
+                            });
+                            subtotalDisplay.textContent = totalAmount.toFixed(2);
+                        } else {
+                            checkboxes.forEach(checkbox => (checkbox.checked = false));
+                            totalAmount = 0;
+                            subtotalDisplay.textContent = totalAmount.toFixed(2);
+                        }
+                    });
+                    
+                    // Update total when individual checkboxes are toggled
+                    cartModalBody.addEventListener('change', function (event) {
+                        if (event.target.classList.contains('cart-item-checkbox')) {
+                            const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+                            totalAmount = 0;
+                            checkboxes.forEach(checkbox => {
+                                if (checkbox.checked) {
+                                    const itemSubtotal = parseFloat(
+                                        document.querySelector(`#subtotal-${checkbox.getAttribute('data-id')}`).textContent
+                                    );
+                                    totalAmount += itemSubtotal;
+                                }
+                            });
+                            subtotalDisplay.textContent = totalAmount.toFixed(2);
+                            selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        
+        document.getElementById('cartButton').addEventListener('click', function () {
+            fetchCartItems();
+        });
+        
+        document.getElementById('sortSelect').addEventListener('change', function () {
+            const sortBy = this.value; // Get the selected sort option (date, price, or name)
+            fetchCartItems(sortBy); // Pass the sort parameter to fetchCartItems
+        });
+        cartModalBody.addEventListener('change', function (event) {
+            if (event.target.classList.contains('cart-item-checkbox')) {
+                const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+                const checkoutButton = document.querySelector('.btn-success');
+                totalAmount = 0;
+        
+                // Track if any checkboxes are selected
+                let hasSelection = false;
+        
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const itemSubtotal = parseFloat(
+                            document.querySelector(`#subtotal-${checkbox.getAttribute('data-id')}`).textContent
+                        );
+                        totalAmount += itemSubtotal;
+                        hasSelection = true; // At least one checkbox is selected
+                    }
+                });
+        
+                subtotalDisplay.textContent = totalAmount.toFixed(2);
+                selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+        
+                // Enable or disable the checkout button
+                checkoutButton.disabled = !hasSelection;
+            }
+        });
+        
+        function fetchCartItems(sortBy = '') {
+            fetch('/view_cart' + (sortBy ? '?sort=' + sortBy : ''))
+                .then(response => response.json())
+                .then(data => {
+                    const cartModalBody = document.getElementById('cartModalBody');
+                    const selectAllCheckbox = document.getElementById('selectAll');
+                    const subtotalDisplay = document.getElementById('subtotal');
+                    cartModalBody.innerHTML = '';
+                    let totalAmount = 0;
+        
+                    // Reset total to 0.00 and uncheck "Select All" by default
+                    selectAllCheckbox.checked = false;
+                    subtotalDisplay.textContent = totalAmount.toFixed(2);
+        
+                    // Display cart items
+                    data.forEach(item => {
+                        const productSubtotal = parseFloat(item.Product_Price) * item.Quantity;
+        
+                        cartModalBody.innerHTML += ` 
+                            <div class="cart-item row mb-4 p-3 border rounded" id="cart-item-${item.cart_item_id}">
+                                <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input cart-item-checkbox" data-id="${item.cart_item_id}">
+                                        <label>Date Added: ${new Date(item.Added_At).toLocaleDateString()}</label>
+                                    </div>
+                                    <p><strong>${item.Product_Name}</strong></p>
+                                    <div class="image-container text-center mb-2">
+                                        <img class="img-fluid rounded" src="data:image/png;base64,${item.Product_Main_Picture}" alt="${item.Product_Name}">
+                                    </div>
+                                    <p>Price: PHP ${parseFloat(item.Product_Price).toFixed(2)}</p>
+                                    <p>Available Stock: ${item.Stock_Quantity || 'Out of Stock'}</p>
+                                </div>
+        
+                                <div class="col-md-6 d-flex flex-column align-items-center">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <button class="btn btn-sm btn-outline-secondary decrease" data-id="${item.cart_item_id}">-</button>
+                                        <input type="text" class="form-control mx-2 text-center" value="${item.Quantity}" readonly style="width: 50px;" id="quantity-${item.cart_item_id}">
+                                        <button class="btn btn-sm btn-outline-secondary increase" data-id="${item.cart_item_id}">+</button>
+                                    </div>
+        
+                                    <p>Subtotal: PHP <span class="subtotal" id="subtotal-${item.cart_item_id}">${productSubtotal.toFixed(2)}</span></p>
+        
+                                    <div class="button-group d-flex flex-wrap gap-2">
+                                        <button class="btn btn-danger btn-sm remove-btn" data-id="${item.cart_item_id}">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+        
+                    // Reapply checkbox logic
+                    applyCheckboxLogic();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        function applyCheckboxLogic() {
+            const cartModalBody = document.getElementById('cartModalBody');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const subtotalDisplay = document.getElementById('subtotal');
+            let totalAmount = 0;
+        
+            // Select All checkbox functionality
+            selectAllCheckbox.addEventListener('change', function () {
+                const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+                if (selectAllCheckbox.checked) {
+                    totalAmount = 0;
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                        const itemSubtotal = parseFloat(
+                            document.querySelector(`#subtotal-${checkbox.getAttribute('data-id')}`).textContent
+                        );
+                        totalAmount += itemSubtotal;
+                    });
+                    subtotalDisplay.textContent = totalAmount.toFixed(2);
+                } else {
+                    checkboxes.forEach(checkbox => (checkbox.checked = false));
+                    totalAmount = 0;
+                    subtotalDisplay.textContent = totalAmount.toFixed(2);
+                }
+            });
+        
+            // Update total when individual checkboxes are toggled
+            cartModalBody.addEventListener('change', function (event) {
+                if (event.target.classList.contains('cart-item-checkbox')) {
+                    const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+                    totalAmount = 0;
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            const itemSubtotal = parseFloat(
+                                document.querySelector(`#subtotal-${checkbox.getAttribute('data-id')}`).textContent
+                            );
+                            totalAmount += itemSubtotal;
+                        }
+                    });
+                    subtotalDisplay.textContent = totalAmount.toFixed(2);
+                    selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                }
+            });
+        }
+        
+        
+        // Refresh page when modal is closed or accidentally closed
+        $('#cartModal').on('hidden.bs.modal', function () {
+            location.reload();
+        });
+    
+        function handleQuantityChange(itemId, action) {
+            const quantityInput = document.getElementById(`quantity-${itemId}`);
+            let newQuantity = parseInt(quantityInput.value);
+        
+            // Ensure quantity increments or decrements by 1 only
+            if (action === 'increase') {
+                newQuantity += 1;
+            } else if (action === 'decrease' && newQuantity > 1) {
+                newQuantity -= 1;
+            }
+        
+            quantityInput.value = newQuantity;
+        
+            // Calculate the new subtotal for the item
+            const pricePerItem = parseFloat(
+                document.querySelector(`#subtotal-${itemId}`).textContent
+            ) / parseInt(quantityInput.value);
+        
+            const newSubtotal = (pricePerItem * newQuantity).toFixed(2);
+            document.querySelector(`#subtotal-${itemId}`).textContent = newSubtotal;
+        
+            // Immediately update the total subtotal
+            updateCartSubtotal();
+        
+            // Send the updated quantity to the server
+            fetch(`/update_quantity/${itemId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quantity: newQuantity })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Quantity updated successfully');
+                    } else {
+                        alert('You have exceeded the available quantity limit. Please ensure your requested quantity does not exceed the available stock.');
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            
+        }
+        function updateCartQuantity(cartItemId, newQuantity) {
+            fetch(`/update_quantity/${cartItemId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quantity: newQuantity }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the UI with the new quantity
+                        alert('Quantity updated successfully!');
+                        document.getElementById(`cart-item-quantity-${cartItemId}`).innerText = newQuantity;
+                    } else {
+                        // Show an error message to the user
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An unexpected error occurred. Please try again.');
+                });
+        }
+        
+        // Function to remove an item from the cart
+        function removeItem(itemId) {
+            fetch(`/remove_cart_item/${itemId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`#cart-item-${itemId}`).remove();
+                    updateCartSubtotal();
+                    alert(data.message); // Show the success message to the user
+                } else {
+                    alert('Failed to remove the item. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        // Function to update the cart's total subtotal
+        function updateCartSubtotal() {
+            let total = 0;
+        
+            document.querySelectorAll('.cart-item-checkbox').forEach(checkbox => {
+                const itemId = checkbox.getAttribute('data-id');
+                const subtotalElement = document.querySelector(`#subtotal-${itemId}`);
+        
+                if (checkbox.checked && subtotalElement) {
+                    total += parseFloat(subtotalElement.textContent);
+                }
+            });
+        
+            document.getElementById('subtotal').textContent = total.toFixed(2);
+        }
+
+        function openCheckoutModal() {
+            const selectedCheckboxes = document.querySelectorAll('.cart-item-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                alert('Please select at least one item to proceed to checkout.');
+                return;
+            }
+        
+            // Collect selected cart item IDs
+            const selectedCartItemIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.getAttribute('data-id'));
+        
+            fetch('/checkout_details')
+                .then(response => response.json())
+                .then(data => {
+                    const checkoutItemsContainer = document.getElementById('checkoutItemsContainer');
+                    const checkoutTotalDisplay = document.getElementById('checkoutTotal');
+                    let checkoutTotal = 0;
+        
+                    checkoutItemsContainer.innerHTML = ''; // Clear modal
+        
+                    // Display Address in an Accordion
+                    const address = data.address;
+                    if (address) {
+                        const addressDetails = `
+                            <div class="accordion mb-3" id="addressAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingAddress">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAddress" aria-expanded="false" aria-controls="collapseAddress">
+                                            Delivery Address
+                                        </button>
+                                    </h2>
+                                    <div id="collapseAddress" class="accordion-collapse collapse" aria-labelledby="headingAddress">
+                                        <div class="accordion-body">
+                                            <p><strong>House No:</strong> ${address.House_No}</p>
+                                            <p><strong>Barangay:</strong> ${address.Barangay}</p>
+                                            <p><strong>City:</strong> ${address.City}</p>
+                                            <p><strong>Province:</strong> ${address.Province}</p>
+                                            <p><strong>Postal Code:</strong> ${address.Postal_Code}</p>
+                                            <p><strong>Country:</strong> ${address.Country}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        checkoutItemsContainer.innerHTML += addressDetails;
+                    }
+        
+                    // Display Only Selected Cart Items
+                    const cartItems = data.cart_items.filter(item => 
+                        selectedCartItemIds.includes(item.cart_item_id.toString())
+                    );
+        
+                    if (cartItems.length === 0) {
+                        checkoutItemsContainer.innerHTML += '<p class="text-center text-muted">No items selected for checkout.</p>';
+                    } else {
+                        cartItems.forEach(item => {
+                            const productPrice = parseFloat(item.Product_Price); // Ensure it's a number
+                            const itemTotal = productPrice * item.Quantity;
+                            checkoutTotal += itemTotal;
+        
+                            // Add item to the modal with `data-*` attributes
+                            checkoutItemsContainer.innerHTML += `
+    <div class="checkout-item row mb-3 border-bottom pb-3" 
+        data-cart-item-id="${item.cart_item_id}" 
+        data-product-id="${item.Product_ID}" 
+        data-seller-id="${item.Seller_ID}" 
+        data-shop-id="${item.Shop_ID}" 
+        data-buyer-id="${data.buyer_id}" 
+        data-quantity="${item.Quantity}" 
+        data-total-amount="${itemTotal}">
+        <div class="col-md-3">
+            <img class="img-fluid rounded" src="data:image/png;base64,${item.Product_Main_Picture}" alt="${item.Product_Name}" />
+        </div>
+        <div class="col-md-9">
+            <h6>${item.Product_Name}</h6>
+            <p><strong>Quantity:</strong> ${item.Quantity}</p>
+            <p><strong>Price:</strong> ₱${productPrice.toFixed(2)}</p>
+            <p><strong>Total:</strong> ₱${itemTotal.toFixed(2)}</p>
+        </div>
+    </div>
+`;
+
+                        });
+                    }
+        
+                    // Update total price in the modal
+                    checkoutTotalDisplay.textContent = checkoutTotal.toFixed(2);
+        
+                    // Show the checkout modal
+                    const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+                    checkoutModal.show();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        function handleConfirmOrder() {
+            const cartItems = [];
+        
+            // Extract order details from the modal
+            document.querySelectorAll('.checkout-item').forEach(item => {
+                const cartItemId = parseInt(item.getAttribute('data-cart-item-id') || 0);
+                const productID = parseInt(item.getAttribute('data-product-id') || 0);
+                const sellerID = parseInt(item.getAttribute('data-seller-id') || 0);
+                const shopID = parseInt(item.getAttribute('data-shop-id') || 0);
+                const buyerID = parseInt(item.getAttribute('data-buyer-id') || 0);
+                const quantity = parseInt(item.getAttribute('data-quantity') || 0);
+                const totalAmount = parseFloat(item.getAttribute('data-total-amount') || 0);
+        
+                if (cartItemId && productID && sellerID && shopID && buyerID && quantity > 0 && totalAmount > 0) {
+                    cartItems.push({
+                        cart_item_id: cartItemId,
+                        Product_ID: productID,
+                        Seller_ID: sellerID,
+                        Shop_ID: shopID,
+                        Buyer_ID: buyerID,
+                        Quantity: quantity,
+                        Total_Amount: totalAmount
+                    });
+                }
+            });
+        
+            if (cartItems.length === 0) {
+                alert('No valid items to confirm. Please ensure items are selected and valid.');
+                return;
+            }
+        
+            fetch('/confirm_order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cart_items: cartItems })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to confirm order. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error confirming order:', error));
+        }
+        
+    </script>
+   <style>
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: white;
+        color: #333;
+    }
+
+    /* Cart Item Styling */
+    .cart-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #ffffff;
+        width: calc(50% - 10px); /* Decreased the width to allow space between items */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+        margin-bottom: 10px;
+        margin-right: 15px;
+        
+    }
+    
+    /* Adjust gap between items, but no need to change the gap for wrapping */
+    .cart-items-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Adjusted gap size to a more moderate space */
+        padding: 10px;
+        background-color: #f8f9fa;
+        overflow-y: auto;
+        max-height: 500px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+    }
+    
+
+    .cart-item:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive Cart Item Layout */
+    @media (max-width: 768px) {
+        .cart-item {
+            width: calc(100% - 20px);
+        }
+    }
+
+    /* Product Details Section */
+    .left-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .left-section img {
+        width: 100%;
+        height: 120px;
+        border-radius: 10px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .left-section img:hover {
+        transform: scale(1.05);
+    }
+
+    .left-section p {
+        font-size: 14px;
+        color: #777;
+    }
+
+    .left-section p strong {
+        font-size: 16px;
+        color: #333;
+    }
+
+    /* Action Section */
+    .right-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-end;
+    }
+
+    .right-section .d-flex {
+        gap: 15px;
+    }
+
+    .right-section .form-control {
+        width: 60px;
+        text-align: center;
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+    }
+
+    /* Button Group */
+    .button-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    /* Buttons */
+    .btn-sm {
+        font-size: 0.875rem;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .remove-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+    }
+
+    .remove-btn:hover {
+        background-color: #c82333;
+    }
+
+    .checkout-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+    }
+
+    .checkout-btn:hover {
+        background-color: #218838;
+    }
+
+    /* Select All Checkbox Styling */
+    .cart-item-checkbox {
+        align-self: flex-start;
+    }
+
+    /* Image Container Styling */
+    .image-container {
+        text-align: center;
+        margin-bottom: 12px;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: auto;
+        border-radius: 15px;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Total and Subtotal Display */
+    #subtotal {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Modal Header Styling */
+    .cart-modal-header {
+        background-color: #007bff;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .cart-modal-header h4 {
+        font-size: 1.25rem;
+        margin: 0;
+    }
+
+    /* Modal Footer Styling */
+    .cart-modal-footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: #f1f1f1;
+        border-top: 1px solid #ddd;
+    }
+
+    .cart-modal-footer .total {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    /* Checkout Button */
+    .checkout-modal-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+    }
+
+    .checkout-modal-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Cart Modal Close Button */
+    .cart-modal-close-btn {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .cart-modal-close-btn:hover {
+        background-color: #ddd;
+    }
+    /* Custom Scrollbar */
+.cart-items-container::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+}
+
+.cart-items-container::-webkit-scrollbar-thumb {
+    background-color: #007bff; /* Color of the scrollbar thumb (the draggable part) */
+    border-radius: 5px; /* Rounding the edges of the scrollbar thumb */
+}
+
+.cart-items-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Color of the scrollbar track (the area behind the thumb) */
+}
+/* Custom Checkbox Styling */
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    background-color: #333; /* Blue background */
+    border: none;
+    border-radius: 4px;
+    transition: all 0.3s ease-in-out;
+    appearance: none; /* Remove the default checkbox style */
+    display: inline-block;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #007bff ; /* Blue background for checked state */
+    
+  
+}
+
+.form-check-input:checked::after {
+     /* Add a checkmark */
+    color: #333; /* White checkmark */
+    font-size: 14px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-check-label {
+    margin-left: 10px; /* Space between checkbox and label text */
+    font-size: 14px;
+    color: #333; /* Text color */
+}
+
+</style>
+
+    <!-- END - FOOTER  -->
+</body>
+</html>

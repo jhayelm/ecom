@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fenamaz - Seller{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='seller.css') }}">
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+
+    <!-- Outfit Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside id="sidebar">
+            <div class="h-100">
+                <div class="sidebar-logo py-4">
+                    <img src="{{ url_for('static', filename='img/logo/logo_white.svg') }}" alt="Fenamaz Logo" class="img-fluid" style="max-width: 100px;">
+                    <a href="#">Fenamaz</a>
+                </div>
+                <!-- Sidebar Navigation -->
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">GENERAL</li>
+                    <li class="sidebar-item {% if request.path == '/seller_dashboard' %}active-panel{% endif %}">               
+                        <a href="{{ url_for('seller_dashboard.seller_dashboard') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/dashboard.png') }}">
+                            <span class="nav-text">Dashboard</span>
+                        </a>                                 
+                    </li>
+                    <li class="sidebar-item {% if request.path == '/seller_shop_profile' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_shop_profile.seller_shop_profile') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/shop.png') }}">
+                            <span class="nav-text">Shop Profile</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.path == '/seller_inventory' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_inventory.seller_inventory') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/inventory.png') }}">
+                            <span class="nav-text">Inventory</span>                      
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item {% if request.path == '/seller_vouchers' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_vouchers.seller_vouchers') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/voucher.png') }}">
+                            <span class="nav-text">Vouchers</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.path == '/seller_orders' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_orders.seller_orders') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/order.png') }}">
+                            <span class="nav-text">Orders</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.path == '/seller_finance' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_finance.seller_finance') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/finance.png') }}">
+                            <span class="nav-text">Finance</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="sidebar-item {% if request.path == '/seller_messages' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_messages.seller_messages') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/message.png') }}">
+                            <span class="nav-text">Messages</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.path == '/seller_notifications' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_notifications.seller_notifications') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/notification.png') }}">
+                            <span class="nav-text">Notifications</span>
+                            
+                            {% if g.seller_unread_notifications_count > 0 %}
+                                {% if request.path == '/seller_notifications' %}
+                                    <span class="badge bg-white text-primary ms-2">+{{ g.seller_unread_notifications_count }}</span>
+                                {% else %}
+                                    <span class="badge bg-primary text-white" style="margin-left: 3.6rem;">+{{ g.seller_unread_notifications_count }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="sidebar-header">ACCOUNT</li>
+                    <li class="sidebar-item {% if request.path == '/seller_settings' %}active-panel{% endif %}">
+                        <a href="{{ url_for('seller_settings.seller_settings') }}" class="sidebar-link">
+                            <img src="{{ url_for('static', filename='img/seller_navs/setting.png') }}">
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            <img src="{{ url_for('static', filename='img/seller_navs/logout.png') }}">
+                            <span class="nav-text">Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        
+        <!-- Main Component -->
+        <div class="main">
+
+            {% block content %}{% endblock %}
+
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out? This will end your current session.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary border border-primary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{{ url_for('seller.logout') }}" class="btn btn-primary">Yes, Log out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOCK CONTAINER -->
+    <script>
+
+        const toggler = document.querySelector(".btn");
+        const toggleIcon = document.querySelector(".toggle-icon");
+        const sidebar = document.querySelector("#sidebar");
+
+        toggler.addEventListener("click", function () {
+            sidebar.classList.toggle("collapsed");
+
+            const isActive = sidebar.classList.contains("collapsed");
+
+            if (isActive) {
+                toggleIcon.src = "{{ url_for('static', filename='img/seller_navs/menu_black.png') }}";
+            } else {
+                toggleIcon.src = "{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const isActive = sidebar.classList.contains("collapsed");
+            toggleIcon.src = isActive ? "{{ url_for('static', filename='img/seller_navs/menu_black.png') }}" : "{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}";
+        });  
+
+    </script>
+
+</body>
+</html>

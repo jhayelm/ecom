@@ -1,0 +1,229 @@
+{% extends "base_seller.html" %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex align-items-center" action="{{ url_for('seller_orders.seller_orders') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search orders..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+            
+                <!-- Reset Button -->
+                <a href="{{ url_for('seller_orders.seller_orders', filter=filter_status, sort=selected_sort) }}" class="btn btn-dark ms-2">Reset</a>
+            
+                <!-- Hidden fields to preserve filter and sort state -->
+                <input type="hidden" name="filter" value="{{ filter_status }}">
+                <input type="hidden" name="sort" value="{{ selected_sort }}">
+            </form>
+            
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="data:image/jpeg;base64,{{ shop_profile.Shop_Profile|b64encode }}" 
+                        alt="Shop Image" 
+                        class="img-fluid border rounded-circle border-secondary border-2"
+                        style="width: 40px; height: 40px">                
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="d-flex flex-column gap-0">
+                    <div class="" >
+                        {{ shop_profile.Shop_Name }}
+                    </div>
+                    <div class="text-secondary d-none" style="font-size: 0.7rem">
+                        {{ session['user_name'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        
+        {% if selected_filter == 'Pending' %}
+            <div>
+                <h3>Pending Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current pending orders.</small></p>
+            </div>
+        {% elif selected_filter == 'Packed' %}
+            <div>
+                <h3>Packed Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current packed orders.</small></p>
+            </div>
+        {% elif selected_filter == 'Shipped' %}
+            <div>
+                <h3>Shipped Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current shipped orders.</small></p>
+            </div>
+        {% elif selected_filter == 'Delivered' %}
+            <div>
+                <h3>Delivered Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current delivered orders.</small></p>
+            </div>
+        {% elif selected_filter == 'Completed' %}
+            <div>
+                <h3>Completed Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current completed orders.</small></p>
+            </div>
+        {% else %}
+            <div>
+                <h3>Orders</h3>
+                <p class="mt-1"><small class="text-muted">Here's your current orders.</small></p>
+            </div>
+        {% endif %}
+
+
+    
+        <div class="btn-container d-flex flex-wrap gap-2">
+
+            <!-- Sort by Date -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li>
+                        <a class="dropdown-item {% if selected_sort == 'recent' %}active{% endif %}" 
+                           href="{{ url_for('seller_orders.seller_orders', sort='recent', filter=selected_filter, search=search) }}">
+                           Recent
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if selected_sort == 'oldest' %}active{% endif %}" 
+                           href="{{ url_for('seller_orders.seller_orders', sort='oldest', filter=selected_filter, search=search) }}">
+                           Oldest
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Filter by Order Type -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary border-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter by Status
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <li><a class="dropdown-item {% if selected_filter == 'Pending' %}active{% endif %}" href="{{ url_for('seller_orders.seller_orders', filter='Pending', sort=selected_sort, search=search) }}">Pending</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Packed' %}active{% endif %}" href="{{ url_for('seller_orders.seller_orders', filter='Packed', sort=selected_sort, search=search) }}">Packed</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Shipped' %}active{% endif %}" href="{{ url_for('seller_orders.seller_orders', filter='Shipped', sort=selected_sort, search=search) }}">Shipped</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Delivered' %}active{% endif %}" href="{{ url_for('seller_orders.seller_orders', filter='Delivered', sort=selected_sort, search=search) }}">Delivered</a></li>
+                    <li><a class="dropdown-item {% if selected_filter == 'Completed' %}active{% endif %}" href="{{ url_for('seller_orders.seller_orders', filter='Completed', sort=selected_sort, search=search) }}">Completed</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Order Table -->
+    <div class="table-responsive table-container" style="overflow-x: auto;">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="bg-primary text-white">No.</th>
+                    <th class="bg-primary text-white d-none">Product ID</th>
+                    <th class="bg-primary text-white d-none">Seller ID</th>
+                    <th class="bg-primary text-white d-none">Shop ID</th>
+                    <th class="bg-primary text-white d-none">Buyer ID</th>
+                    <th class="bg-primary text-white">Product Name</th>
+                    <th class="bg-primary text-white d-none">Shop Name</th>
+                    <th class="bg-primary text-white d-none">Seller Name</th>
+                    <th class="bg-primary text-white">Buyer Name</th>
+                    <th class="bg-primary text-white">Quantity</th>
+                    <th class="bg-primary text-white">Total Amount</th>
+                    <th class="bg-primary text-white">Payment</th>
+                    <th class="bg-primary text-white">Status</th>
+                    <th class="bg-primary text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="d-none">{{ order.Product_ID }}</td>
+                    <td class="d-none">{{ order.Seller_ID }}</td>
+                    <td class="d-none">{{ order.Shop_ID }}</td>
+                    <td class="d-none">{{ order.Buyer_ID }}</td>
+                    <td>{{ order.Product_Name }}</td>
+                    <td class="d-none">{{ order.Shop_Name }}</td>
+                    <td class="d-none">{{ order.seller_name }}</td>
+                    <td>{{ order.buyer_name }}</td>
+                    <td>{{ order.Quantity }}</td>
+                    <td>PHP {{ "{:,.2f}".format(order.Total_Amount) }}</td>
+                    <td>{{ order.Payment_Method }} - {{ order.Payment_Status }}</td>
+                    <td>{{ order.Status }}</td>
+                    <td>
+                        {% if order.Status != 'Packed' %}
+                        <form action="{{ url_for('seller_orders.update_order_status', order_id=order.Order_ID) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-primary btn-sm">Packed</button>
+                        </form>
+                        {% else %}
+                        <span>Waiting for shipment.</span>
+                        {% endif %}
+                    </td>
+                </tr>            
+                {% else %}
+                <tr>
+                    <td colspan="13" class="text-center">No orders found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+        {% if page > 1 %}
+            <a href="{{ url_for('seller_orders.seller_orders', page=page-1, search=search, filter=selected_filter, sort=selected_sort) }}" class="btn btn-primary">Previous</a>
+        {% endif %}
+
+        <span>Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('seller_orders.seller_orders', page=page+1, search=search, filter=selected_filter, sort=selected_sort) }}" class="btn btn-primary">Next</a>
+        {% endif %}
+    </div>
+
+</main>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='table.css') }}">
+
+{% endblock %}

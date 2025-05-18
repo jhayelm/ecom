@@ -1,0 +1,237 @@
+{% extends "base_login.html" %}
+
+{% block title %}Register - Address Information{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container registration-container">
+        <a href="{{ url_for('registration.personal_info') }}" class="exit-icon text-dark">
+            <i class="bi bi-arrow-left fs-4 px-2"></i>
+        </a>
+        <h2 class="mb-4 fs-3" style="font-weight: 600;">Register!</h2>
+        <h3 class="mb-3 fs-6" style="font-weight: 500;"><strong>Step 2:</strong> Address Information</h3>
+
+        <!-- Message Box -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} 
+        
+        <form action="{{ url_for('registration.address_info') }}" method="POST">
+
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="state" class="form-label">Province*</label>
+                    <select class="form-control" id="state" name="state" required>
+                        <option value="">Select your province</option>
+                        <option value="Metro Manila">Metro Manila</option>
+                        <option value="Quezon">Quezon</option>
+                        <option value="Cavite">Cavite</option>
+                        <option value="Laguna">Laguna</option>
+                        <option value="Batangas">Batangas</option>
+                        <option value="Pampanga">Pampanga</option>
+                        <option value="Bulacan">Bulacan</option>
+                        <option value="Rizal">Rizal</option>
+                        <option value="Tarlac">Tarlac</option>
+                        <option value="Bataan">Bataan</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="zipcode" class="form-label">Zip Code*</label>
+                    <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="ex. 4027" required oninput="numbers_only_limit4(this)">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="city" class="form-label">City*</label>
+                <select class="form-control" id="city" name="city" required>
+                    <option value="">Select your city</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="brgy" class="form-label">Barangay*</label>
+                <select class="form-control" id="brgy" name="brgy" required>
+                    <option value="">Select your barangay</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="street" class="form-label">House No.*</label>
+                <input type="text" class="form-control" id="street" name="street" placeholder="Enter your house number" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Next</button>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript to handle address population -->
+<script>
+    // Function to limit the zip code input to 4 characters
+    function numbers_only_limit4(input) {
+        input.value = input.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        if (input.value.length > 4) {
+            input.value = input.value.substring(0, 4); // Limit to 4 characters
+        }
+    }
+
+    // Prepopulate Barangay and City based on selected Province
+    const addressData = {
+        "Metro Manila": {
+          "cities": {
+            "Makati": ["Brgy Bel-Air", "Brgy San Antonio", "Brgy Pio del Pilar", "Brgy Bangkal", "Brgy Tejeros", "Brgy Guadalupe Nuevo", "Brgy Rizal", "Brgy Magallanes", "Brgy Cembo", "Brgy South Cembo"],
+            "Quezon City": ["Brgy Kamuning", "Brgy Katipunan", "Brgy Libis", "Brgy Commonwealth", "Brgy San Isidro", "Brgy Batasan", "Brgy Baño", "Brgy Holy Spirit", "Brgy Sto. Niño", "Brgy Payatas"],
+            "Manila": ["Brgy Ermita", "Brgy Malate", "Brgy San Miguel", "Brgy Sampaloc", "Brgy Quiapo", "Brgy Tondo", "Brgy Binondo", "Brgy Paco", "Brgy Intramuros", "Brgy San Andres"],
+            "Taguig": ["Brgy Tuktukan", "Brgy Western Bicutan", "Brgy Upper Bicutan", "Brgy Lower Bicutan", "Brgy Hagonoy", "Brgy San Juan", "Brgy North Daang Hari", "Brgy South Daang Hari", "Brgy Ususan", "Brgy Bagumbayan"],
+            "Pasig": ["Brgy Kapasigan", "Brgy Bagong Ilog", "Brgy San Juan", "Brgy Santolan", "Brgy Sto. Niño", "Brgy Maybunga", "Brgy Dela Paz", "Brgy Malinao", "Brgy San Joaquin", "Brgy Pinagbuhatan"]
+          }
+        },
+        "Quezon": {
+          "cities": {
+            "Lucena": ["Brgy Dalahican", "Brgy Ibabang Dupay", "Brgy Cotta", "Brgy Gulang-Gulang", "Brgy Plaza", "Brgy Longos", "Brgy Tignoan", "Brgy Isabang", "Brgy Ilayang Iyam", "Brgy Alitaptap"],
+            "Tayabas": ["Brgy Kumintang", "Brgy Maybancal", "Brgy Santo Niño", "Brgy Malicboy", "Brgy Tumbaga", "Brgy Lag-ong", "Brgy Dapdap", "Brgy Boton", "Brgy Pitogo", "Brgy Silangan"],
+            "Sariaya": ["Brgy Mayubay", "Brgy Bungahan", "Brgy Balubal", "Brgy Parang", "Brgy Manggahan", "Brgy Sabang", "Brgy Bangko", "Brgy Masin", "Brgy Lunas", "Brgy San Antonio"],
+            "Candelaria": ["Brgy Longos", "Brgy Bonga", "Brgy Quinale", "Brgy Pook", "Brgy Palasan", "Brgy Villa", "Brgy San Isidro", "Brgy San Juan", "Brgy Caridad", "Brgy Calumpang"],
+            "Pitogo": ["Brgy Tangos", "Brgy Malate", "Brgy Bulusan", "Brgy Kilawan", "Brgy Salvador", "Brgy Magsaysay", "Brgy Balubad", "Brgy Pingkian", "Brgy Katuwiran", "Brgy Mabato"]
+          }
+        },
+        "Cavite": {
+          "cities": {
+            "Dasmariñas": ["Brgy Longos", "Brgy San Juan", "Brgy Manggahan", "Brgy Sampaloc", "Brgy Burol", "Brgy Salitran", "Brgy Hulugan", "Brgy Maliksi", "Brgy Paliparan", "Brgy Soro-Soro"],
+            "Tagaytay": ["Brgy Alfonso", "Brgy Maitim 2nd", "Brgy Nasugbu", "Brgy San Jose", "Brgy Silang", "Brgy Banay-Banay", "Brgy Sungay", "Brgy Kaytitinga", "Brgy San Agustin", "Brgy Mendez"],
+            "Trece Martires": ["Brgy San Juan", "Brgy A. Manalo", "Brgy Bucandala", "Brgy Conchu", "Brgy Manggahan", "Brgy Poblacion", "Brgy Dos", "Brgy Luma", "Brgy Sampaloc", "Brgy Cabuco"],
+            "Imus": ["Brgy Malagasang", "Brgy Anabu", "Brgy San Nicolas", "Brgy Pasong Buaya", "Brgy Hulong Duhat", "Brgy Langkaan", "Brgy Alapan", "Brgy Bucandala", "Brgy Imus Poblacion", "Brgy Bahay Pari"],
+            "Bacoor": ["Brgy San Nicolas", "Brgy Bayanan", "Brgy Alima", "Brgy Molino", "Brgy Sinalhan", "Brgy Salitran", "Brgy Pamplona", "Brgy Zapote", "Brgy Longos", "Brgy Talaba"]
+          }
+        },
+        "Laguna": {
+            "cities": {
+              "Santa Rosa": ["Brgy Don Jose", "Brgy Balibago", "Brgy Dila", "Brgy Santo Niño", "Brgy Tagapo", "Brgy San Lorenzo", "Brgy Mamatid", "Brgy Pulo", "Brgy Guadalupe", "Brgy Loma"],
+              "San Pedro": ["Brgy San Vicente", "Brgy San Juan", "Brgy Cupang", "Brgy Sico", "Brgy Cuyab", "Brgy Sto. Niño", "Brgy Longos", "Brgy Labas", "Brgy Tangkad", "Brgy Dila"],
+              "Biñan": ["Brgy San Antonio", "Brgy San Jose", "Brgy Longos", "Brgy Sto. Niño", "Brgy Malen", "Brgy Kanlurang Maynila", "Brgy Poblacion", "Brgy Lumbang", "Brgy Timbao", "Brgy Alapan"],
+              "Calamba": ["Brgy Parian", "Brgy Pansol", "Brgy Makiling", "Brgy Banaybanay", "Brgy Lumbang", "Brgy Mayapa", "Brgy Poblacion", "Brgy San Cristobal", "Brgy Lakandula", "Brgy Tulo"],
+              "Alaminos": ["Brgy Longos", "Brgy Banaybanay", "Brgy San Agustin", "Brgy Santo Niño", "Brgy Tambo", "Brgy Bagumbayan", "Brgy San Carlos", "Brgy Cawag", "Brgy Longa", "Brgy Suba"],
+              "Santa Cruz": ["Brgy Pagsanjan", "Brgy Sto. Niño", "Brgy Katipunan", "Brgy Longos", "Brgy Dita", "Brgy Siplay", "Brgy Malinta", "Brgy San Vicente", "Brgy Quinale", "Brgy Salapungan"],
+              "San Pablo": ["Brgy San Juan", "Brgy Longos", "Brgy San Vicente", "Brgy San Isidro", "Brgy Santo Niño", "Brgy Talim", "Brgy Malusak", "Brgy Wawa", "Brgy Poblacion", "Brgy Cupang"],
+              "Bae": ["Brgy Longos", "Brgy Banaybanay", "Brgy San Pedro", "Brgy Poblacion", "Brgy Sto. Niño", "Brgy Kangkong", "Brgy Tuntungin", "Brgy Malangit", "Brgy Guinhawa", "Brgy Lagumbang"],
+              "Caluan": ["Brgy Longos", "Brgy San Jose", "Brgy San Antonio", "Brgy San Isidro", "Brgy Poblacion", "Brgy Taal", "Brgy Maluhong", "Brgy San Pedro", "Brgy Banaybanay", "Brgy Talim"],
+              "Pagsanjan": ["Brgy Cainta", "Brgy Longos", "Brgy San Isidro", "Brgy Pagsanjan", "Brgy Palugam", "Brgy Sinipit", "Brgy Malaya", "Brgy Poblacion", "Brgy Guinhawa", "Brgy Banaybanay"],
+              "Majayjay": ["Brgy Katipunan", "Brgy Poblacion", "Brgy Longos", "Brgy San Pedro", "Brgy Sto. Niño", "Brgy San Isidro", "Brgy San Vicente", "Brgy Banaybanay", "Brgy Malusak", "Brgy Talim"],
+              "Los Baños": ["Brgy Longos", "Brgy Baybayin", "Brgy Maahas", "Brgy Lawa", "Brgy Poblacion", "Brgy Labas", "Brgy San Antonio", "Brgy Tuntungin", "Brgy Malangit", "Brgy Balatong"],
+              "Nagcarlan": ["Brgy San Isidro", "Brgy Malupak", "Brgy Pagsawitan", "Brgy Longos", "Brgy Banaybanay", "Brgy Patubig", "Brgy San Juan", "Brgy Liwanag", "Brgy Barangka", "Brgy San Vicente"],
+              "Liliw": ["Brgy Banaybanay", "Brgy San Vicente", "Brgy Longos", "Brgy Tigas", "Brgy Talim", "Brgy Poblacion", "Brgy Katipunan", "Brgy Sikatuna", "Brgy San Pedro", "Brgy Malaya"],
+              "Magdalena": ["Brgy Longos", "Brgy Pagsanjan", "Brgy Poblacion", "Brgy San Jose", "Brgy San Vicente", "Brgy Katipunan", "Brgy Hulog", "Brgy Balabac", "Brgy San Juan", "Brgy Matobato"]
+            }
+        },
+        "Batangas": {
+          "cities": {
+            "Batangas City": ["Brgy Alangilan", "Brgy Dita", "Brgy Libjo", "Brgy Pinamucan", "Brgy San Isidro", "Brgy San Sebastian", "Brgy San Pascual", "Brgy Poblacion", "Brgy Balagtas", "Brgy Tanauan"],
+            "Lipa": ["Brgy Banay-Banay", "Brgy San Antonio", "Brgy Malabanan", "Brgy Balintawak", "Brgy Tambo", "Brgy Inosloban", "Brgy Antipolo", "Brgy San Juan", "Brgy San Pedro", "Brgy Poblacion"],
+            "Tanauan": ["Brgy Luyos", "Brgy Poblacion", "Brgy San Juan", "Brgy San Isidro", "Brgy Longos", "Brgy Malvar", "Brgy San Jose", "Brgy Muntingdilaw", "Brgy Labac", "Brgy Sto. Niño"],
+            "Nasugbu": ["Brgy Bigaa", "Brgy Dila", "Brgy Longos", "Brgy Poblacion", "Brgy Luntal", "Brgy Matabungkay", "Brgy Pagapas", "Brgy Bignay", "Brgy Maunlad", "Brgy Nagbaliw"],
+            "Lemery": ["Brgy Bangbang", "Brgy Alangilan", "Brgy Bukal", "Brgy Dalipit", "Brgy Lumbang", "Brgy Malitlit", "Brgy San Juan", "Brgy Muntingdilaw", "Brgy Old Sagay", "Brgy Talahib"]
+          }
+        },
+        "Pampanga": {
+          "cities": {
+            "Angeles": ["Brgy Balibago", "Brgy Pampang", "Brgy Malabanias", "Brgy Cutud", "Brgy San Jose", "Brgy Anunas", "Brgy Agapito", "Brgy Marisol", "Brgy Sto. Niño", "Brgy Pulung Maragul"],
+            "San Fernando": ["Brgy San Juan", "Brgy Dolores", "Brgy San Isidro", "Brgy Santo Rosario", "Brgy Panducot", "Brgy Magliman", "Brgy Telabastagan", "Brgy Maimpis", "Brgy San Pedro", "Brgy San Agustin"],
+            "Mabalacat": ["Brgy Mamatitang", "Brgy Sapang Bato", "Brgy Clark", "Brgy Balubad", "Brgy Poblacion", "Brgy San Francisco", "Brgy Santa Maria", "Brgy Dau", "Brgy Camachiles", "Brgy Salapungan"],
+            "Porac": ["Brgy Mancatian", "Brgy Planas", "Brgy Sapang Uwak", "Brgy Sta. Lucia", "Brgy Baranggay", "Brgy San Vicente", "Brgy Matalac", "Brgy Sinalayan", "Brgy Pasig", "Brgy Aluang"],
+            "Floridablanca": ["Brgy Poblacion", "Brgy Alapan", "Brgy Agatang", "Brgy Benetican", "Brgy San Pedro", "Brgy Tambo", "Brgy Buayan", "Brgy Ocampo", "Brgy Longos", "Brgy San Agustin"]
+          }
+        },
+        "Bulacan": {
+          "cities": {
+            "Malolos": ["Brgy Longos", "Brgy Matimbo", "Brgy Sto. Niño", "Brgy Sapang Palay", "Brgy Meyto", "Brgy San Isidro", "Brgy Banaba", "Brgy Tikay", "Brgy Sto. Cristo", "Brgy Subic"],
+            "Meycauayan": ["Brgy Ugong", "Brgy Longos", "Brgy Banga", "Brgy Bagumbayan", "Brgy Ibayo", "Brgy Siling Matanda", "Brgy Kangkong", "Brgy Pantoc", "Brgy Sta. Maria", "Brgy Malhacan"],
+            "San Jose del Monte": ["Brgy Graceville", "Brgy Gaya-Gaya", "Brgy Sto. Niño", "Brgy San Gabriel", "Brgy Poblacion", "Brgy San Isidro", "Brgy San Juan", "Brgy Longos", "Brgy Tungkong Mangga", "Brgy Muntingdilaw"],
+            "San Miguel": ["Brgy Poblacion", "Brgy San Isidro", "Brgy Malapad", "Brgy Camias", "Brgy Dulong Bayan", "Brgy San Nicolas", "Brgy Bagumbayan", "Brgy Buhangin", "Brgy Pantoc", "Brgy San Fernando"],
+            "Bulakan": ["Brgy Longos", "Brgy Poblacion", "Brgy Sta. Lucia", "Brgy San Juan", "Brgy Baytang", "Brgy San Sebastian", "Brgy Dulong Bayang", "Brgy Tumaguiti", "Brgy San Rafael", "Brgy Burol"]
+          }
+        },
+        "Rizal": {
+            "cities": {
+            "Antipolo": ["Brgy Cupang", "Brgy Dela Paz", "Brgy San Juan", "Brgy San Isidro", "Brgy San Juan", "Brgy Muntingdilaw", "Brgy Cupang", "Brgy San Juan", "Brgy Longos", "Brgy Poblacion"],
+            "Cainta": ["Brgy San Isidro", "Brgy San Juan", "Brgy San Antonio", "Brgy San Juan", "Brgy San Juan", "Brgy San Juan", "Brgy San Juan", "Brgy San Juan", "Brgy Longos", "Brgy Paliparan"],
+            "Rodriguez": ["Brgy San Juan", "Brgy San Isidro", "Brgy Longos", "Brgy San Juan", "Brgy Tindig", "Brgy Sapang Bulak", "Brgy Malinao", "Brgy San Isidro", "Brgy Labuyo", "Brgy Bagumbayan"],
+            "Binangonan": ["Brgy San Isidro", "Brgy Longos", "Brgy Tindig", "Brgy San Jose", "Brgy San Isidro", "Brgy Hagonoy", "Brgy Bayang Luma", "Brgy Parang", "Brgy San Juan", "Brgy Paliparan"],
+            "San Mateo": ["Brgy San Isidro", "Brgy Longos", "Brgy Malabanban", "Brgy San Juan", "Brgy Casiguran", "Brgy Malinao", "Brgy Pinagbuklod", "Brgy Alang-Alang", "Brgy Alulong", "Brgy Labuyo"]
+            }
+        },
+        "Tarlac": {
+            "cities": {
+            "Tarlac City": ["Brgy San Sebastian", "Brgy San Isidro", "Brgy Tarlac", "Brgy San Juan", "Brgy San Antonio", "Brgy San Fernando", "Brgy San Mateo", "Brgy San Lorenzo", "Brgy San Juan", "Brgy Poblacion"],
+            "Capas": ["Brgy San Juan", "Brgy San Antonio", "Brgy San Vicente", "Brgy Matikod", "Brgy Dapdap", "Brgy Longos", "Brgy Barangay", "Brgy Bagumbayan", "Brgy San Jose", "Brgy Tambo"],
+            "Concepcion": ["Brgy Malapit", "Brgy Baño", "Brgy San Jose", "Brgy Bacun", "Brgy Longos", "Brgy Loma", "Brgy San Jose", "Brgy Camiling", "Brgy San Isidro", "Brgy Alulong"],
+            "Victoria": ["Brgy San Juan", "Brgy San Juan", "Brgy San Juan", "Brgy San Antonio", "Brgy San Isidro", "Brgy San Nicolas", "Brgy San Lorenzo", "Brgy Longos", "Brgy Tindig", "Brgy Bacubac"],
+            "Paniqui": ["Brgy San Juan", "Brgy Maligaya", "Brgy San Isidro", "Brgy Garlang", "Brgy Labuyo", "Brgy Tarlac", "Brgy San Antonio", "Brgy San Mateo", "Brgy Sto. Niño", "Brgy Ibas"]
+            }
+        },
+        "Bataan": {
+            "cities": {
+            "Balanga": ["Brgy Poblacion", "Brgy San Jose", "Brgy Longos", "Brgy San Isidro", "Brgy San Vicente", "Brgy San Pedro", "Brgy Tenejero", "Brgy Dolores", "Brgy San Fernando", "Brgy San Vicente"],
+            "Mariveles": ["Brgy Biaan", "Brgy Lualhati", "Brgy Calaguiman", "Brgy Malolos", "Brgy Manang", "Brgy San Jose", "Brgy Longos", "Brgy Poblacion", "Brgy Pasig", "Brgy San Antonio"],
+            "Orion": ["Brgy San Pedro", "Brgy Lumbang", "Brgy Malimanga", "Brgy Longos", "Brgy Bancal", "Brgy Burol", "Brgy Camachile", "Brgy San Isidro", "Brgy Bayabas", "Brgy Obando"],
+            "Dinalupihan": ["Brgy Iba", "Brgy San Jose", "Brgy Maligaya", "Brgy Anawangin", "Brgy Nancayasan", "Brgy Libsang", "Brgy Tangcarang", "Brgy Longos", "Brgy Tuktukan", "Brgy Tagumpay"],
+            "Hermosa": ["Brgy San Vicente", "Brgy Dulong Bayan", "Brgy Gabi", "Brgy Maybubukid", "Brgy Cuenca", "Brgy Tarlac", "Brgy Pampanga", "Brgy Cawag", "Brgy San Felipe", "Brgy Longos"]
+            }
+        }
+    };
+      
+
+    document.getElementById('state').addEventListener('change', function() {
+        const province = this.value;
+        const citySelect = document.getElementById('city');
+        const brgySelect = document.getElementById('brgy');
+        
+        // Clear previous options
+        citySelect.innerHTML = '<option value="">Select your city</option>';
+        brgySelect.innerHTML = '<option value="">Select your barangay</option>';
+        
+        if (province && addressData[province]) {
+            const cities = addressData[province].cities;
+            
+            // Populate city dropdown based on selected province
+            for (const city in cities) {
+                const cityOption = document.createElement('option');
+                cityOption.value = city;
+                cityOption.text = city;
+                citySelect.appendChild(cityOption);
+            }
+
+        }
+    });
+
+    document.getElementById('city').addEventListener('change', function() {
+        const city = this.value;
+        const brgySelect = document.getElementById('brgy');
+        
+        // Clear previous barangay options
+        brgySelect.innerHTML = '<option value="">Select your barangay</option>';
+
+        const province = document.getElementById('state').value;
+        if (province && city && addressData[province] && addressData[province].cities[city]) {
+            const barangays = addressData[province].cities[city];
+
+            // Populate barangay dropdown based on selected city
+            for (const brgy of barangays) {
+                const brgyOption = document.createElement('option');
+                brgyOption.value = brgy;
+                brgyOption.text = brgy;
+                brgySelect.appendChild(brgyOption);
+            }
+        }
+    });
+</script>
+
+{% endblock %}

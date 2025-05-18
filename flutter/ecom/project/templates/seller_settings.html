@@ -1,0 +1,100 @@
+{% extends "base_seller.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand">
+
+    <div class="top-container">
+        <!-- Button for sidebar toggle -->
+        <div class="d-flex align-items-center gap-1">
+            <button class="btn" type="button" data-bs-theme="dark">
+                <img src="{{ url_for('static', filename='img/seller_navs/menu_blue.png') }}" class="toggle-icon">
+            </button>                   
+            <form class="d-flex align-items-center" action="{{ url_for('seller_inventory.seller_inventory') }}" method="get">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search products..."
+                    aria-label="Search"
+                    value="{{ request.args.get('search', '') }}"  
+                />
+                <button type="submit" class="btn btn-primary ms-2">Search</button>
+            
+                <!-- Reset Button -->
+                <a href="{{ url_for('seller_inventory.seller_inventory', category=selected_category, sort=selected_sort) }}" class="btn btn-dark ms-2">Reset</a>
+            
+                <!-- Hidden fields to preserve filter and sort state -->
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                <input type="hidden" name="sort" value="{{ selected_sort }}">
+            </form>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="btn-group">
+            <div class="d-flex flex-row align-items-center px-1">
+                <button type="button" class="btn btn-link profile">
+                    <img src="data:image/jpeg;base64,{{ shop_profile.Shop_Profile|b64encode }}" 
+                        alt="Shop Image" 
+                        class="img-fluid border rounded-circle border-secondary border-2"
+                        style="width: 40px; height: 40px">                
+                </button>
+                <span class="d-none">
+                    User ID: {{ session['user_id'] }}
+                </span>
+                <div class="d-flex flex-column gap-0">
+                    <div class="" >
+                        {{ shop_profile.Shop_Name }}
+                    </div>
+                    <div class="text-secondary d-none" style="font-size: 0.7rem">
+                        {{ session['user_name'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</nav>
+
+<main class="content">
+
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+        <div>
+            <h3>Settings</h3>
+            <p class="mt-1"><small class="text-muted">Here's the settings.</small></p>
+        </div>
+    
+        <div class="btn-container d-flex flex-wrap gap-2">
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/filter.png') }}" alt="Filter Icon" class="me-1" style="width: 1rem;">
+                Filter
+            </button>
+            <button class="btn ghost-button d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/icons/sort.png') }}" alt="Sort Icon" class="me-1" style="width: 1rem;">
+                Sort
+            </button>
+        </div>
+    
+        
+        
+    </div>
+
+</main>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

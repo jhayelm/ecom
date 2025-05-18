@@ -1,0 +1,64 @@
+{% extends "base_login.html" %}
+
+{% block title %}Register - Valid Information{% endblock %}
+
+{% block content %}
+<div class="full-screen-container">
+    <div class="form-container registration-container">
+        <a href="{{ url_for('registration.address_info') }}" class="exit-icon text-dark">
+            <i class="bi bi-arrow-left fs-4 px-2"></i>
+        </a>
+        <h2 class="mb-4 fs-3" style="font-weight: 600;">Register!</h2>
+        <h3 class="mb-3 fs-6" style="font-weight: 500;"><strong>Step 3:</strong> Valid Information</h3>
+
+        <!-- Message Box -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} 
+        
+        <form action="{{ url_for('registration.valid_info') }}" method="POST" enctype="multipart/form-data">
+            <!-- Dropdown for Type of Valid ID -->
+            <div class="mb-3">
+                <label for="valid_type" class="form-label">Type of Valid ID*</label>
+                <select class="form-control" id="valid_type" name="valid_type" required>
+                    <option value="">Select Type of ID</option>
+                    <option value="Driver's License">Driver's License</option>
+                    <option value="Passport">Passport</option>
+                    <option value="SSS">SSS ID</option>
+                    <option value="PhilHealth">PhilHealth ID</option>
+                    <option value="Voter's ID">Voter's ID</option>
+                    <option value="UMID">UMID</option>
+                    <option value="Postal ID">Postal ID</option>
+                    <option value="Senior Citizen ID">Senior Citizen ID</option>
+                    <option value="Police Clearance">Police Clearance</option>
+                    <option value="Birth Certificate">Birth Certificate</option>
+                </select>
+            </div>
+
+            <!-- Text Input for Valid ID Number -->
+            <div class="mb-3">
+                <label for="valid_no" class="form-label">Valid ID Number*</label>
+                <input type="text" class="form-control" id="valid_no" name="valid_no" placeholder="Enter your valid ID number" required>
+            </div>
+
+            <!-- File Upload for Valid ID Picture -->
+            <div class="mb-3">
+                <label for="valid_pic" class="form-label">Upload Valid ID Picture*</label>
+                <input type="file" class="form-control" id="valid_pic" name="valid_pic" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,341 @@
+{% extends "base_buyer.html" %}
+
+{% block title %}Order Tracking{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='buyer_order_tracking.css') }}">
+
+<!-- MESSAGE BOX -->
+{% with messages = get_flashed_messages(with_categories=True) %}
+{% if messages %}
+    <div class="alert-container">
+    {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
+<!-- END - MESSAGE BOX -->
+
+<main class="content px-5 mt-5">
+
+    <div class="container-fluid">
+        <h3 class="mb-4">Order Tracking</h3>
+        
+        <div class="timeline-container mb-5">
+            <div class="d-flex align-items-center position-relative">
+                <!-- Timeline Step: Pending -->
+                <button class="timeline-step {% if selected_status in ['Pending', 'Packed', 'Shipped', 'For Delivery', 'Delivered', 'Completed'] %}primary{% endif %} {% if selected_status == 'Pending' %}active{% endif %}" onclick="filterStatus('Pending')">
+                    <span class="timeline-icon">
+                        <i class="bi bi-clock {% if selected_status == 'Pending' %}text-white{% else %}text-secondary{% endif %}"></i>
+                    </span>
+                    <p class="timeline-label">Pending</p>
+                </button>
+        
+                <!-- Timeline Line -->
+                <div class="timeline-line {% if selected_status in ['Packed', 'Shipped', 'For Delivery', 'Delivered', 'Completed'] %}primary{% endif %}"></div>
+        
+                <!-- Timeline Step: Packed -->
+                <button class="timeline-step {% if selected_status in ['Packed', 'Shipped', 'For Delivery', 'Delivered', 'Completed'] %}primary{% endif %} {% if selected_status == 'Packed' %}active{% endif %}" onclick="filterStatus('Packed')">
+                    <span class="timeline-icon">
+                        <i class="bi bi-box-seam {% if selected_status == 'Packed' %}text-white{% else %}text-secondary{% endif %}"></i>
+                    </span>
+                    <p class="timeline-label">Packed</p>
+                </button>
+        
+                <!-- Timeline Line -->
+                <div class="timeline-line {% if selected_status in ['Shipped', 'For Delivery', 'Delivered', 'Completed'] %}primary{% endif %}"></div>
+        
+                <!-- Timeline Step: Shipped -->
+                <button class="timeline-step {% if selected_status in ['Shipped', 'For Delivery', 'Delivered', 'Completed'] %}primary{% endif %} {% if selected_status == 'Shipped' %}active{% endif %}" onclick="filterStatus('Shipped')">
+                    <span class="timeline-icon">
+                        <i class="bi bi-truck {% if selected_status == 'Shipped' %}text-white{% else %}text-secondary{% endif %}"></i>
+                    </span>
+                    <p class="timeline-label">Shipped</p>
+                </button>
+        
+                <!-- Timeline Line -->
+                <div class="timeline-line {% if selected_status in ['For Delivery', 'Delivered', 'Completed'] %}primary{% endif %}"></div>
+        
+                <!-- Timeline Step: For Delivery -->
+                <button class="timeline-step {% if selected_status in ['For Delivery', 'Delivered', 'Completed'] %}primary{% endif %} {% if selected_status == 'For Delivery' %}active{% endif %}" onclick="filterStatus('For Delivery')">
+                    <span class="timeline-icon">
+                        <i class="bi bi-bag-check {% if selected_status == 'For Delivery' %}text-white{% else %}text-secondary{% endif %}"></i>
+                    </span>
+                    <p class="timeline-label">For Delivery</p>
+                </button>
+        
+                <!-- Timeline Line -->
+                <div class="timeline-line {% if selected_status in ['Delivered', 'Completed'] %}primary{% endif %}"></div>
+        
+                <!-- Timeline Step: Delivered -->
+                <button class="timeline-step {% if selected_status in ['Delivered', 'Completed'] %}primary{% endif %} {% if selected_status == 'Delivered' %}active{% endif %}" onclick="filterStatus('Delivered')">
+                    <span class="timeline-icon">
+                        <i class="bi bi-check-circle {% if selected_status == 'Delivered' %}text-white{% else %}text-secondary{% endif %}"></i>
+                    </span>
+                    <p class="timeline-label">Delivered</p>
+                </button>
+        
+                <!-- Timeline Line -->
+                <div class="timeline-line {% if selected_status == 'Completed' %}primary{% endif %}"></div>
+        
+                <!-- Timeline Step: Completed -->
+                <button class="timeline-step {% if selected_status == 'Completed' %}primary{% endif %} {% if selected_status == 'Completed' %}active{% endif %}" onclick="filterStatus('Completed')">
+                    <span class="timeline-icon">
+                        <i class="bi bi-check-circle-fill {{ 'text-white' if selected_status == 'Completed' else 'text-secondary' }}"></i>
+                    </span>
+                    <p class="timeline-label">Completed</p>
+                </button>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+
+
+        {% if orders %}
+            <div class="order-list">
+                {% for order in orders %}
+            
+                
+                <div class="card mb-3 order-card" data-status="{{ order.Status }}">
+                    <div class="card-body">
+                        <!-- SHOP PROFILE AND NAME AT THE TOP -->
+                        <div class="seller-shop-container mb-4 pb-3 border-bottom border-1">
+                            <div class="shop-container d-flex flex-row justify-content-between align-items-center">
+                                <div class="shop-profile d-flex align-items-center gap-3">
+                                    <img src="data:image/jpeg;base64,{{ order.Shop_Profile | b64encode }}" 
+                                        alt="{{ order.Shop_Name }}" 
+                                        class="img-fluid rounded-circle border border-1"
+                                        style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="d-flex flex-column">
+                                        <h5 class="mb-0">{{ order.Shop_Name }}</h5>
+                                        <h5 class="mb-0 d-none">{{ order.Shop_ID}}</h5>
+                                    </div>
+                                </div>
+                                <div class="shop-details">
+                                    <a href="/chat_with_seller/{{ order.Seller_ID }}" class="btn btn-primary btn-sm">Chat with Seller</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTENT DIVIDED INTO THREE CONTAINERS -->
+                        <div class="row d-flex align-items-center">
+                            <!-- LEFT CONTAINER -->
+                            <div class="col-md-3 text-center">
+                                <!-- Wrapper to control fixed size and border radius -->
+                                <div style="width: 250px; height: 200px; border-radius: 1rem; overflow: hidden; margin: 0 auto;">
+                                    <!-- Product Main Picture -->
+                                    <img src="data:image/jpeg;base64,{{ order.Product_Main_Picture | b64encode }}" 
+                                        alt="{{ order.Product_Name }}"
+                                        class="img-fluid"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </div>
+
+                            <!-- CENTER CONTAINER -->
+                            <div class="col-md-6 d-flex flex-column gap-2">
+                                <!-- Dynamic Badge -->
+                                <span class="badge text-white
+                                    {% if order.Status == 'Pending' %}bg-danger text-white
+                                    {% elif order.Status == 'Packed' %}bg-info text-white
+                                    {% elif order.Status == 'Shipped' %}bg-warning text-white
+                                    {% elif order.Status == 'For Delivery' %}bg-dark text-white
+                                    {% elif order.Status == 'Delivered' %}bg-primary text-white
+                                    {% elif order.Status == 'Completed' %}bg-success text-white
+                                    {% else %}bg-secondary text-white
+                                    {% endif %}" style="width: 5rem;">
+                                    {{ order.Status }}
+                                </span>
+                                <span class="text-primary fs-2 fw-bold"> {{ order.Product_Name }}</span>
+
+                                <span class="fs-4 mb-3">₱ {{ "{:,.2f}".format(order.Total_Amount) }}</span>
+                                <div class="d-flex flex-row gap-2">
+                                    <span>{{ order.Quantity }} unit/s</span>
+                                    <span><strong>({{ order.Product_Color }})</strong></span>
+                                </div>
+                                <span class="text-secondary">{{ order.Date_Ordered.strftime('%B %d, %Y') }}</span>
+                            </div>
+
+
+                            <!-- RIGHT CONTAINER -->
+                            <div class="col-md-3 text-center text-secondary">
+                                {% if order.Status == 'Pending' %}
+                                    <p ><em><strong>Note:</strong> Your order is pending and being prepared for shipment by the seller.</em></p>
+                                {% elif order.Status == 'Packed' %}
+                                    <p><em><strong>Note:</strong>  Your order is packed and ready to be shipped soon.</em></p>
+                                {% elif order.Status == 'Shipped' %}
+                                    <p><em><strong>Note:</strong>  Your order is on its way; track your shipment for updates.</em></p>
+                                {% elif order.Status == 'Delivered' %}
+                                    <form action="{{ url_for('buyer_order_tracking.mark_as_received', order_id=order.Order_ID) }}" method="POST">
+                                        <button type="submit" class="btn btn-primary btn-m mt-3">Order Received</button>
+                                    </form>
+                                {% elif order.Status == 'Completed' %}
+                                    <div class="d-flex flex-row gap-2">
+                                        <!-- Rate Button -->
+                                        <button type="button" class="btn btn-primary btn-m" data-bs-toggle="modal" data-bs-target="#rateModal{{ order.Order_ID }}">
+                                            Rate Now
+                                        </button>
+                                        <!-- Feedback Button -->
+                                        <button type="button" class="btn btn-dark btn-m" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ order.Order_ID }}">
+                                            Send Feedback
+                                        </button>
+                                    </div>
+                                
+                                    <!-- Rate Modal -->
+                                    <div class="modal fade" id="rateModal{{ order.Order_ID }}" tabindex="-1" aria-labelledby="rateModalLabel{{ order.Order_ID }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form action="{{ url_for('buyer_order_tracking.submit_rating', order_id=order.Order_ID) }}" method="POST">
+                                                <input type="hidden" name="shop_id" value="{{ order.Shop_ID }}">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="rateModalLabel{{ order.Order_ID }}">Rate the Shop</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <label for="rating" class="form-label">Rate the Shop (1-5):</label>
+                                                        <input type="number" name="rating" id="rating" class="form-control" min="1" max="5" required>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit Rating</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Feedback Modal -->
+                                    <div class="modal fade" id="feedbackModal{{ order.Order_ID }}" tabindex="-1" aria-labelledby="feedbackModalLabel{{ order.Order_ID }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form action="{{ url_for('buyer_order_tracking.submit_feedback', order_id=order.Order_ID) }}" method="POST">
+                                                <input type="hidden" name="shop_id" value="{{ order.Shop_ID }}">
+                                                <input type="hidden" name="product_id" value="{{ order.Product_ID }}">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="feedbackModalLabel{{ order.Order_ID }}">Provide Feedback</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <label for="feedback" class="form-label">Your Feedback:</label>
+                                                        <textarea name="feedback" id="feedback" class="form-control" rows="4" required></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">No orders found.</div>
+        {% endif %}
+
+        
+
+        <!-- Pagination -->
+        <div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+            {% if page > 1 %}
+                <a href="{{ url_for('buyer_order_tracking.buyer_order_tracking', page=page-1, search=search, filter=selected_filter, sort=selected_sort) }}" class="btn btn-primary">Previous</a>
+            {% endif %}
+
+            <span>Page {{ page }} of {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('buyer_order_tracking.buyer_order_tracking', page=page+1, search=search, filter=selected_filter, sort=selected_sort) }}" class="btn btn-primary">Next</a>
+            {% endif %}
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    function filterStatus(status) {
+        // Get all cards
+        const cards = document.querySelectorAll('.order-card');
+
+        // Loop through each card and check its data-status attribute
+        cards.forEach(card => {
+            if (card.getAttribute('data-status') === status || status === 'All') {
+                card.style.display = 'block'; // Show card
+            } else {
+                card.style.display = 'none'; // Hide card
+            }
+        });
+    }
+
+    function updateTimeline(selectedStatus) {
+        // All statuses in the order of the timeline
+        const statuses = ['Pending', 'Packed', 'Shipped', 'For Delivery', 'Delivered', 'Completed'];
+        
+        // Get all timeline steps and lines
+        const steps = document.querySelectorAll('.timeline-icon');
+        const lines = document.querySelectorAll('.timeline-line');
+        
+        // Get the index of the selected status
+        const currentIndex = statuses.indexOf(selectedStatus);
+        
+        // Loop through each status and update the classes
+        statuses.forEach((status, index) => {
+            const step = steps[index];
+            const icon = step.querySelector('i'); // Select the icon inside the step
+            const line = lines[index];
+            
+            if (index < currentIndex) {
+                // All statuses before the selected one
+                step.classList.add('bg-dark');
+                step.classList.remove('bg-primary', 'bg-default');
+                icon.classList.add('text-white');
+                icon.classList.remove('text-secondary');
+                if (line) line.classList.add('bg-primary');
+            } else if (index === currentIndex) {
+                // The selected status
+                step.classList.add('bg-primary');
+                step.classList.remove('bg-dark', 'bg-default');
+                icon.classList.add('text-white');
+                icon.classList.remove('text-secondary');
+                if (line) line.classList.remove('bg-primary');
+            } else {
+                // All statuses after the selected one
+                step.classList.add('bg-default');
+                step.classList.remove('bg-dark', 'bg-primary');
+                icon.classList.add('text-secondary');
+                icon.classList.remove('text-white');
+                if (line) line.classList.remove('bg-primary');
+            }
+        });
+    }
+    
+    // Attach event listeners to the timeline buttons
+    document.querySelectorAll('.timeline-step').forEach((button, index) => {
+        button.addEventListener('click', () => {
+            const statuses = ['Pending', 'Packed', 'Shipped', 'For Delivery', 'Delivered', 'Completed'];
+            const selectedStatus = statuses[index];
+            updateTimeline(selectedStatus);
+        });
+    });
+    
+    
+</script>
+
+{% endblock %}
